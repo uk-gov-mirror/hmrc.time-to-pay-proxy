@@ -261,56 +261,56 @@ object ChargeInfoTestData {
 
       def chargeInfoResponseR2JsonFromEligibility: JsObject = chargeInfoResponseR1JsonFromEligibility ++ Json
         .parse("""{
-                 |  "customerSignals": [
-                 |    {
-                 |      "signalType": "Rls",
-                 |      "signalValue": "signal value",
-                 |      "signalDescription": "description"
-                 |    },
-                 |    {
-                 |      "signalType": "Welsh Language Signal",
-                 |      "signalValue": "signal value",
-                 |      "signalDescription": "description"
-                 |    }
-                 |  ],
-                 |  "chargeTypeAssessment" : [
-                 |    {
-                 |      "chargeReference" : "CHARGE REFERENCE",
-                 |      "charges" : [
-                 |        {
-                 |          "accruedInterest" : 50,
-                 |          "chargeSource" : "Source",
-                 |          "chargeType" : "charge type",
-                 |          "creationDate" : "2025-07-02",
-                 |          "dueDate" : "2021-01-31",
-                 |          "interestStartDate" : "2020-01-03",
-                 |          "isInterestBearingCharge" : true,
-                 |          "mainType" : "main type",
-                 |          "originalChargeType" : "Original Charge Type",
-                 |          "outstandingAmount" : 500,
-                 |          "parentMainTrans" : "Parent Main Transaction",
-                 |          "saTaxYearEnd" : "2020-04-05",
-                 |          "subTrans" : "1000",
-                 |          "taxPeriodFrom" : "2020-01-02",
-                 |          "taxPeriodTo" : "2020-12-31",
-                 |          "tieBreaker" : "Tie Breaker",
-                 |          "locks": [
-                 |            {
-                 |              "lockType": "Posting/Clearing",
-                 |              "lockReason": "No Reallocation"
-                 |            }
-                 |          ]
-                 |        }
-                 |      ],
-                 |      "debtTotalAmount" : 1000,
-                 |      "mainTrans" : "2000",
-                 |      "parentChargeReference" : "PARENT CHARGE REF",
-                 |      "isInsolvent": false
-                 |    }
-                 |  ],
-                 |  "chargeTypesExcluded" : false
-                 |}
-                 |""".stripMargin)
+          |  "customerSignals": [
+          |    {
+          |      "signalType": "Rls",
+          |      "signalValue": "signal value",
+          |      "signalDescription": "description"
+          |    },
+          |    {
+          |      "signalType": "Welsh Language Signal",
+          |      "signalValue": "signal value",
+          |      "signalDescription": "description"
+          |    }
+          |  ],
+          |  "chargeTypeAssessment" : [
+          |    {
+          |      "chargeReference" : "CHARGE REFERENCE",
+          |      "charges" : [
+          |        {
+          |          "accruedInterest" : 50,
+          |          "chargeSource" : "Source",
+          |          "chargeType" : "charge type",
+          |          "creationDate" : "2025-07-02",
+          |          "dueDate" : "2021-01-31",
+          |          "interestStartDate" : "2020-01-03",
+          |          "isInterestBearingCharge" : true,
+          |          "mainType" : "main type",
+          |          "originalChargeType" : "Original Charge Type",
+          |          "outstandingAmount" : 500,
+          |          "parentMainTrans" : "Parent Main Transaction",
+          |          "saTaxYearEnd" : "2020-04-05",
+          |          "subTrans" : "1000",
+          |          "taxPeriodFrom" : "2020-01-02",
+          |          "taxPeriodTo" : "2020-12-31",
+          |          "tieBreaker" : "Tie Breaker",
+          |          "locks": [
+          |            {
+          |              "lockType": "Posting/Clearing",
+          |              "lockReason": "No Reallocation"
+          |            }
+          |          ]
+          |        }
+          |      ],
+          |      "debtTotalAmount" : 1000,
+          |      "mainTrans" : "2000",
+          |      "parentChargeReference" : "PARENT CHARGE REF",
+          |      "isInsolvent": false
+          |    }
+          |  ],
+          |  "chargeTypesExcluded" : false
+          |}
+          |""".stripMargin)
         .as[JsObject]
 
       def chargeInfoResponseR1JsonFromProxy: JsObject = Json
@@ -393,56 +393,56 @@ object ChargeInfoTestData {
 
       def chargeInfoResponseR2JsonFromProxy: JsObject = chargeInfoResponseR1JsonFromProxy ++ Json
         .parse("""{
-                 |  "customerSignals": [
-                 |    {
-                 |      "signalType": "Rls",
-                 |      "signalValue": "signal value",
-                 |      "signalDescription": "description"
-                 |    },
-                 |    {
-                 |      "signalType": "Welsh Language Signal",
-                 |      "signalValue": "signal value",
-                 |      "signalDescription": "description"
-                 |    }
-                 |  ],
-                 |  "chargeTypeAssessment" : [
-                 |    {
-                 |      "chargeReference" : "CHARGE REFERENCE",
-                 |      "charges" : [
-                 |        {
-                 |          "accruedInterest" : 50,
-                 |          "chargeSource" : "Source",
-                 |          "chargeType" : "charge type",
-                 |          "creationDate" : "2025-07-02",
-                 |          "dueDate" : "2021-01-31",
-                 |          "interestStartDate" : "2020-01-03",
-                 |          "isInterestBearingCharge" : true,
-                 |          "mainType" : "main type",
-                 |          "originalChargeType" : "Original Charge Type",
-                 |          "outstandingAmount" : 500,
-                 |          "parentMainTrans" : "Parent Main Transaction",
-                 |          "saTaxYearEnd" : "2020-04-05",
-                 |          "subTrans" : "1000",
-                 |          "taxPeriodFrom" : "2020-01-02",
-                 |          "taxPeriodTo" : "2020-12-31",
-                 |          "tieBreaker" : "Tie Breaker",
-                 |          "locks": [
-                 |            {
-                 |              "lockType": "Posting/Clearing",
-                 |              "lockReason": "No Reallocation"
-                 |            }
-                 |          ]
-                 |        }
-                 |      ],
-                 |      "debtTotalAmount" : 1000,
-                 |      "mainTrans" : "2000",
-                 |      "parentChargeReference" : "PARENT CHARGE REF",
-                 |      "isInsolvent": false
-                 |    }
-                 |  ],
-                 |  "chargeTypesExcluded" : false
-                 |}
-                 |""".stripMargin)
+          |  "customerSignals": [
+          |    {
+          |      "signalType": "Rls",
+          |      "signalValue": "signal value",
+          |      "signalDescription": "description"
+          |    },
+          |    {
+          |      "signalType": "Welsh Language Signal",
+          |      "signalValue": "signal value",
+          |      "signalDescription": "description"
+          |    }
+          |  ],
+          |  "chargeTypeAssessment" : [
+          |    {
+          |      "chargeReference" : "CHARGE REFERENCE",
+          |      "charges" : [
+          |        {
+          |          "accruedInterest" : 50,
+          |          "chargeSource" : "Source",
+          |          "chargeType" : "charge type",
+          |          "creationDate" : "2025-07-02",
+          |          "dueDate" : "2021-01-31",
+          |          "interestStartDate" : "2020-01-03",
+          |          "isInterestBearingCharge" : true,
+          |          "mainType" : "main type",
+          |          "originalChargeType" : "Original Charge Type",
+          |          "outstandingAmount" : 500,
+          |          "parentMainTrans" : "Parent Main Transaction",
+          |          "saTaxYearEnd" : "2020-04-05",
+          |          "subTrans" : "1000",
+          |          "taxPeriodFrom" : "2020-01-02",
+          |          "taxPeriodTo" : "2020-12-31",
+          |          "tieBreaker" : "Tie Breaker",
+          |          "locks": [
+          |            {
+          |              "lockType": "Posting/Clearing",
+          |              "lockReason": "No Reallocation"
+          |            }
+          |          ]
+          |        }
+          |      ],
+          |      "debtTotalAmount" : 1000,
+          |      "mainTrans" : "2000",
+          |      "parentChargeReference" : "PARENT CHARGE REF",
+          |      "isInsolvent": false
+          |    }
+          |  ],
+          |  "chargeTypesExcluded" : false
+          |}
+          |""".stripMargin)
         .as[JsObject]
     }
 
@@ -672,49 +672,49 @@ object ChargeInfoTestData {
 
       def chargeInfoResponseR2JsonFromEligibility: JsObject = chargeInfoResponseR1JsonFromEligibility ++ Json
         .parse("""{
-                 |  "customerSignals": [
-                 |    {
-                 |      "signalType": "Welsh Language Signal",
-                 |      "signalValue": "signal value"
-                 |    }
-                 |  ],
-                 |  "chargeTypeAssessment" : [
-                 |    {
-                 |      "chargeReference" : "CHARGE REFERENCE",
-                 |      "charges" : [
-                 |        {
-                 |          "accruedInterest" : 50,
-                 |          "chargeSource" : "Source",
-                 |          "chargeType" : "charge type",
-                 |          "creationDate" : "2025-07-02",
-                 |          "dueDate" : "2021-01-31",
-                 |          "interestStartDate" : "2020-01-03",
-                 |          "isInterestBearingCharge" : true,
-                 |          "mainType" : "main type",
-                 |          "originalChargeType" : "Original Charge Type",
-                 |          "outstandingAmount" : 500,
-                 |          "parentMainTrans" : "Parent Main Transaction",
-                 |          "saTaxYearEnd" : "2020-04-05",
-                 |          "subTrans" : "1000",
-                 |          "taxPeriodFrom" : "2020-01-02",
-                 |          "taxPeriodTo" : "2020-12-31",
-                 |          "tieBreaker" : "Tie Breaker",
+          |  "customerSignals": [
+          |    {
+          |      "signalType": "Welsh Language Signal",
+          |      "signalValue": "signal value"
+          |    }
+          |  ],
+          |  "chargeTypeAssessment" : [
+          |    {
+          |      "chargeReference" : "CHARGE REFERENCE",
+          |      "charges" : [
+          |        {
+          |          "accruedInterest" : 50,
+          |          "chargeSource" : "Source",
+          |          "chargeType" : "charge type",
+          |          "creationDate" : "2025-07-02",
+          |          "dueDate" : "2021-01-31",
+          |          "interestStartDate" : "2020-01-03",
+          |          "isInterestBearingCharge" : true,
+          |          "mainType" : "main type",
+          |          "originalChargeType" : "Original Charge Type",
+          |          "outstandingAmount" : 500,
+          |          "parentMainTrans" : "Parent Main Transaction",
+          |          "saTaxYearEnd" : "2020-04-05",
+          |          "subTrans" : "1000",
+          |          "taxPeriodFrom" : "2020-01-02",
+          |          "taxPeriodTo" : "2020-12-31",
+          |          "tieBreaker" : "Tie Breaker",
                             "locks": [
-                 |            {
-                 |              "lockType": "Posting/Clearing",
-                 |              "lockReason": "No Reallocation"
-                 |            }
-                 |          ]
-                 |        }
-                 |      ],
-                 |      "debtTotalAmount" : 1000,
-                 |      "mainTrans" : "2000",
-                 |      "parentChargeReference" : "PARENT CHARGE REF",
-                 |      "isInsolvent": false
-                 |    }
-                 |  ],
-                 |  "chargeTypesExcluded": false
-                 |}""".stripMargin)
+          |            {
+          |              "lockType": "Posting/Clearing",
+          |              "lockReason": "No Reallocation"
+          |            }
+          |          ]
+          |        }
+          |      ],
+          |      "debtTotalAmount" : 1000,
+          |      "mainTrans" : "2000",
+          |      "parentChargeReference" : "PARENT CHARGE REF",
+          |      "isInsolvent": false
+          |    }
+          |  ],
+          |  "chargeTypesExcluded": false
+          |}""".stripMargin)
         .as[JsObject]
 
       def chargeInfoResponseR1JsonFromProxy: JsObject = Json
@@ -786,49 +786,49 @@ object ChargeInfoTestData {
 
       def chargeInfoResponseR2JsonFromProxy: JsObject = chargeInfoResponseR1JsonFromProxy ++ Json
         .parse("""{
-                 |  "customerSignals": [
-                 |    {
-                 |      "signalType": "Welsh Language Signal",
-                 |      "signalValue": "signal value"
-                 |    }
-                 |  ],
-                 |  "chargeTypeAssessment" : [
-                 |    {
-                 |      "chargeReference" : "CHARGE REFERENCE",
-                 |      "charges" : [
-                 |        {
-                 |          "accruedInterest" : 50,
-                 |          "chargeSource" : "Source",
-                 |          "chargeType" : "charge type",
-                 |          "creationDate" : "2025-07-02",
-                 |          "dueDate" : "2021-01-31",
-                 |          "interestStartDate" : "2020-01-03",
-                 |          "isInterestBearingCharge" : true,
-                 |          "mainType" : "main type",
-                 |          "originalChargeType" : "Original Charge Type",
-                 |          "outstandingAmount" : 500,
-                 |          "parentMainTrans" : "Parent Main Transaction",
-                 |          "saTaxYearEnd" : "2020-04-05",
-                 |          "subTrans" : "1000",
-                 |          "taxPeriodFrom" : "2020-01-02",
-                 |          "taxPeriodTo" : "2020-12-31",
-                 |          "tieBreaker" : "Tie Breaker",
+          |  "customerSignals": [
+          |    {
+          |      "signalType": "Welsh Language Signal",
+          |      "signalValue": "signal value"
+          |    }
+          |  ],
+          |  "chargeTypeAssessment" : [
+          |    {
+          |      "chargeReference" : "CHARGE REFERENCE",
+          |      "charges" : [
+          |        {
+          |          "accruedInterest" : 50,
+          |          "chargeSource" : "Source",
+          |          "chargeType" : "charge type",
+          |          "creationDate" : "2025-07-02",
+          |          "dueDate" : "2021-01-31",
+          |          "interestStartDate" : "2020-01-03",
+          |          "isInterestBearingCharge" : true,
+          |          "mainType" : "main type",
+          |          "originalChargeType" : "Original Charge Type",
+          |          "outstandingAmount" : 500,
+          |          "parentMainTrans" : "Parent Main Transaction",
+          |          "saTaxYearEnd" : "2020-04-05",
+          |          "subTrans" : "1000",
+          |          "taxPeriodFrom" : "2020-01-02",
+          |          "taxPeriodTo" : "2020-12-31",
+          |          "tieBreaker" : "Tie Breaker",
                             "locks": [
-                 |            {
-                 |              "lockType": "Posting/Clearing",
-                 |              "lockReason": "No Reallocation"
-                 |            }
-                 |          ]
-                 |        }
-                 |      ],
-                 |      "debtTotalAmount" : 1000,
-                 |      "mainTrans" : "2000",
-                 |      "parentChargeReference" : "PARENT CHARGE REF",
-                 |      "isInsolvent": false
-                 |    }
-                 |  ],
-                 |  "chargeTypesExcluded": false
-                 |}""".stripMargin)
+          |            {
+          |              "lockType": "Posting/Clearing",
+          |              "lockReason": "No Reallocation"
+          |            }
+          |          ]
+          |        }
+          |      ],
+          |      "debtTotalAmount" : 1000,
+          |      "mainTrans" : "2000",
+          |      "parentChargeReference" : "PARENT CHARGE REF",
+          |      "isInsolvent": false
+          |    }
+          |  ],
+          |  "chargeTypesExcluded": false
+          |}""".stripMargin)
         .as[JsObject]
     }
 
@@ -1022,35 +1022,35 @@ object ChargeInfoTestData {
 
       def chargeInfoResponseR2JsonFromEligibility: JsObject = chargeInfoResponseR1JsonFromEligibility ++ Json
         .parse("""{
-                 |  "customerSignals": [
-                 |    {
-                 |      "signalType": "Welsh Language Signal",
-                 |      "signalValue": "signal value"
-                 |    }
-                 |  ],
-                 |  "chargeTypeAssessment" : [
-                 |    {
-                 |      "chargeReference" : "CHARGE REFERENCE",
-                 |      "charges" : [
-                 |        {
-                 |          "accruedInterest" : 50,
-                 |          "chargeSource" : "Source",
-                 |          "chargeType" : "charge type",
-                 |          "dueDate" : "2021-01-31",
-                 |          "mainType" : "main type",
-                 |          "outstandingAmount" : 500,
-                 |          "subTrans" : "1000",
-                 |          "taxPeriodFrom" : "2020-01-02",
-                 |          "taxPeriodTo" : "2020-12-31"
-                 |        }
-                 |      ],
-                 |      "debtTotalAmount" : 1000,
-                 |      "mainTrans" : "2000",
-                 |      "isInsolvent": false
-                 |    }
-                 |  ],
-                 |  "chargeTypesExcluded" : false
-                 |}""".stripMargin)
+          |  "customerSignals": [
+          |    {
+          |      "signalType": "Welsh Language Signal",
+          |      "signalValue": "signal value"
+          |    }
+          |  ],
+          |  "chargeTypeAssessment" : [
+          |    {
+          |      "chargeReference" : "CHARGE REFERENCE",
+          |      "charges" : [
+          |        {
+          |          "accruedInterest" : 50,
+          |          "chargeSource" : "Source",
+          |          "chargeType" : "charge type",
+          |          "dueDate" : "2021-01-31",
+          |          "mainType" : "main type",
+          |          "outstandingAmount" : 500,
+          |          "subTrans" : "1000",
+          |          "taxPeriodFrom" : "2020-01-02",
+          |          "taxPeriodTo" : "2020-12-31"
+          |        }
+          |      ],
+          |      "debtTotalAmount" : 1000,
+          |      "mainTrans" : "2000",
+          |      "isInsolvent": false
+          |    }
+          |  ],
+          |  "chargeTypesExcluded" : false
+          |}""".stripMargin)
         .as[JsObject]
 
       def chargeInfoResponseR1JsonFromProxy: JsObject = Json
@@ -1106,35 +1106,35 @@ object ChargeInfoTestData {
 
       def chargeInfoResponseR2JsonFromProxy: JsObject = chargeInfoResponseR1JsonFromProxy ++ Json
         .parse("""{
-                 |  "customerSignals": [
-                 |    {
-                 |      "signalType": "Welsh Language Signal",
-                 |      "signalValue": "signal value"
-                 |    }
-                 |  ],
-                 |  "chargeTypeAssessment" : [
-                 |    {
-                 |      "chargeReference" : "CHARGE REFERENCE",
-                 |      "charges" : [
-                 |        {
-                 |          "accruedInterest" : 50,
-                 |          "chargeSource" : "Source",
-                 |          "chargeType" : "charge type",
-                 |          "dueDate" : "2021-01-31",
-                 |          "mainType" : "main type",
-                 |          "outstandingAmount" : 500,
-                 |          "subTrans" : "1000",
-                 |          "taxPeriodFrom" : "2020-01-02",
-                 |          "taxPeriodTo" : "2020-12-31"
-                 |        }
-                 |      ],
-                 |      "debtTotalAmount" : 1000,
-                 |      "mainTrans" : "2000",
-                 |      "isInsolvent": false
-                 |    }
-                 |  ],
-                 |  "chargeTypesExcluded": false
-                 |}""".stripMargin)
+          |  "customerSignals": [
+          |    {
+          |      "signalType": "Welsh Language Signal",
+          |      "signalValue": "signal value"
+          |    }
+          |  ],
+          |  "chargeTypeAssessment" : [
+          |    {
+          |      "chargeReference" : "CHARGE REFERENCE",
+          |      "charges" : [
+          |        {
+          |          "accruedInterest" : 50,
+          |          "chargeSource" : "Source",
+          |          "chargeType" : "charge type",
+          |          "dueDate" : "2021-01-31",
+          |          "mainType" : "main type",
+          |          "outstandingAmount" : 500,
+          |          "subTrans" : "1000",
+          |          "taxPeriodFrom" : "2020-01-02",
+          |          "taxPeriodTo" : "2020-12-31"
+          |        }
+          |      ],
+          |      "debtTotalAmount" : 1000,
+          |      "mainTrans" : "2000",
+          |      "isInsolvent": false
+          |    }
+          |  ],
+          |  "chargeTypesExcluded": false
+          |}""".stripMargin)
         .as[JsObject]
     }
   }

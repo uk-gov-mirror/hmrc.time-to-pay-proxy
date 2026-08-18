@@ -1,10 +1,10 @@
-import uk.gov.hmrc.DefaultBuildSettings
 import scoverage.ScoverageKeys
+import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "time-to-pay-proxy"
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.18"
+ThisBuild / scalaVersion := "3.3.8"
 
 val silencerVersion = "1.7.3"
 lazy val ItTest = config("it") extend Test
@@ -21,25 +21,26 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     dependencyOverrides ++= AppDependencies.dependencyOverrides,
     scalacOptions ++= Seq(
-      "-Wconf:src=routes/.*:s",
-      "-Ywarn-dead-code",
+      "-source:future-migration",
       "-Xfatal-warnings",
-      "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-      "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-      "-Ywarn-unused:locals", // Warn if a local definition is unused.
-      "-Ywarn-unused:params", // Warn if a value parameter is unused.
-      "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
-      "-Ywarn-unused:privates", // Warn if a private member is unused.
+      "-Wunused:implicits", // Replaced -Ywarn-unused:implicits
+      "-Wunused:imports", // Replaced -Ywarn-unused:imports
+      "-Wunused:locals", // Replaced -Ywarn-unused:locals
+      "-Wunused:params", // Replaced -Ywarn-unused:params
+      "-Wunused:privates", // Replaced -Ywarn-unused:privates
       "-language:higherKinds",
       "-Wconf:src=routes/.*:s",
-      "-Wconf:cat=unused-imports&src=html/.*:s"
+      "-Wconf:src=html/.*:s",
+      "-Wconf:msg=Flag.*repeatedly:s",
+      "-Wconf:msg=.*Manifest.*:s", // Suppresses the Manifest deprecation error
+      "-feature"
     )
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(coverageSettings: _*)
+  .settings(coverageSettings *)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     Compile / doc / scalacOptions ++= Seq(

@@ -18,6 +18,7 @@ package uk.gov.hmrc.timetopayproxy.connectors
 
 import cats.data.EitherT
 import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads, StringContextOps }
 import uk.gov.hmrc.timetopayproxy.config.{ AppConfig, FeatureSwitch }
@@ -87,7 +88,7 @@ class TtpFeedbackLoopConnector @Inject() (
         httpClient
           .post(url)
           .withBody(Json.toJson(ttppRequest))
-          .setHeader(requestHeaders: _*)
+          .setHeader(requestHeaders*)
           .execute[Either[ProxyEnvelopeError, TtpCancelSuccessfulResponse]]
       )
     ).logBasedOnStatusCode(logger)
@@ -109,7 +110,7 @@ class TtpFeedbackLoopConnector @Inject() (
         httpClient
           .post(url)
           .withBody(Json.toJson(ttppRequestR2))
-          .setHeader(requestHeaders: _*)
+          .setHeader(requestHeaders*)
           .execute[Either[ProxyEnvelopeError, TtpCancelSuccessfulResponse]]
       )
     ).logBasedOnStatusCode(logger)
@@ -131,7 +132,7 @@ class TtpFeedbackLoopConnector @Inject() (
         httpClient
           .post(url)
           .withBody(Json.toJson(request))
-          .setHeader(requestHeaders: _*)
+          .setHeader(requestHeaders*)
           .execute[Either[ProxyEnvelopeError, TtpFullAmendSuccessfulResponse]]
       )
     ).logBasedOnStatusCode(logger)
@@ -153,7 +154,7 @@ class TtpFeedbackLoopConnector @Inject() (
         httpClient
           .post(url)
           .withBody(Json.toJson(ttppInformRequest))
-          .setHeader(requestHeaders: _*)
+          .setHeader(requestHeaders*)
           .execute[Either[ProxyEnvelopeError, TtpInformSuccessfulResponse]]
       )
     ).logBasedOnStatusCode(logger)

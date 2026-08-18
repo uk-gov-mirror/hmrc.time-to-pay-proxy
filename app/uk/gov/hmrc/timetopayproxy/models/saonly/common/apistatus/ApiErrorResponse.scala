@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus
 
 import play.api.libs.json.{ Format, Json }
 
-final case class ApiErrorResponse(value: String)
+final case class ApiErrorResponse(value: String) extends AnyVal
 
 object ApiErrorResponse {
   implicit val format: Format[ApiErrorResponse] = Json.valueFormat[ApiErrorResponse]

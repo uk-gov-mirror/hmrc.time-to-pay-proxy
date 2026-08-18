@@ -18,14 +18,14 @@ package uk.gov.hmrc.timetopayproxy.testutils.schematestutils.impl
 
 import org.scalactic.source.Position
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsArray, JsFalse, JsNull, JsNumber, JsObject, JsString, JsTrue, JsValue, Json }
 
 final class StableStringGeneratorSpec extends AnyFreeSpec {
   "StableStringGenerator" - {
 
     ".stableStringForSchemaValidator" - {
-      import StableStringGenerator.{ stableStringForSchemaValidator => stringifier }
+      import StableStringGenerator.stableStringForSchemaValidator as stringifier
 
       /** This here is the main point for the method.
         *
@@ -175,7 +175,7 @@ final class StableStringGeneratorSpec extends AnyFreeSpec {
           val specialCharacterEntries: List[String] = specialCharacterMappings.flatMap(_._2)
           withClue("Validate special character entries.\n\n") {
             specialCharacterEntries.size shouldBe 9
-            specialCharacterEntries.foreach { specialCharacterEntry: String =>
+            specialCharacterEntries.foreach { specialCharacterEntry =>
               withClue(s"Validate special character entry ${JsString(specialCharacterEntry)}") {
                 // Must be titled with a freeform text description, followed by a colon,
                 //   followed by 1-2 UTF-16 code points.

@@ -22,5 +22,5 @@ final case class QuoteId(value: String) extends AnyVal
 
 object QuoteId extends ValueTypeFormatter {
   implicit val format: Format[QuoteId] =
-    valueTypeFormatter(QuoteId.apply, QuoteId.unapply)
+    valueTypeFormatter(QuoteId.apply, x => Some(x.value))
 }

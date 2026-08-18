@@ -17,7 +17,7 @@
 package uk.gov.hmrc.timetopayproxy.models
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.SaOnlyRegimeType
 
 import java.time.LocalDate
@@ -54,43 +54,43 @@ class GenerateQuoteRequestSpec extends AnyWordSpec with Matchers {
   )
 
   val json = """{
-               |  "customerReference": "uniqRef1234",
-               |  "channelIdentifier": "selfService",
-               |  "plan": {
-               |    "quoteType": "instalmentAmount",
-               |    "quoteDate": "2021-05-13",
-               |    "instalmentStartDate": "2021-05-13",
-               |    "instalmentAmount": 100,
-               |    "frequency": "annually",
-               |    "duration": 12,
-               |    "initialPaymentAmount": 100,
-               |    "initialPaymentDate": "2021-05-13",
-               |    "paymentPlanType": "timeToPay"
-               |  },
-               |  "customerPostCodes": [
-               |    {
-               |      "addressPostcode": "NW9 5XW",
-               |      "postcodeDate": "2021-05-13"
-               |    }
-               |  ],
-               |  "debtItemCharges": [
-               |    {
-               |      "debtItemChargeId": "debtItemChargeId1",
-               |      "mainTrans": "5330",
-               |      "subTrans": "1180",
-               |      "originalDebtAmount": 100,
-               |      "interestStartDate": "2021-05-13",
-               |      "paymentHistory": [
-               |        {
-               |          "paymentDate": "2021-05-13",
-               |          "paymentAmount": 100
-               |        }
-               |      ],
-               |      "dueDate": "2021-05-13"
-               |    }
-               |  ],
-               |  "regimeType": "SA"
-               |}
+    |  "customerReference": "uniqRef1234",
+    |  "channelIdentifier": "selfService",
+    |  "plan": {
+    |    "quoteType": "instalmentAmount",
+    |    "quoteDate": "2021-05-13",
+    |    "instalmentStartDate": "2021-05-13",
+    |    "instalmentAmount": 100,
+    |    "frequency": "annually",
+    |    "duration": 12,
+    |    "initialPaymentAmount": 100,
+    |    "initialPaymentDate": "2021-05-13",
+    |    "paymentPlanType": "timeToPay"
+    |  },
+    |  "customerPostCodes": [
+    |    {
+    |      "addressPostcode": "NW9 5XW",
+    |      "postcodeDate": "2021-05-13"
+    |    }
+    |  ],
+    |  "debtItemCharges": [
+    |    {
+    |      "debtItemChargeId": "debtItemChargeId1",
+    |      "mainTrans": "5330",
+    |      "subTrans": "1180",
+    |      "originalDebtAmount": 100,
+    |      "interestStartDate": "2021-05-13",
+    |      "paymentHistory": [
+    |        {
+    |          "paymentDate": "2021-05-13",
+    |          "paymentAmount": 100
+    |        }
+    |      ],
+    |      "dueDate": "2021-05-13"
+    |    }
+    |  ],
+    |  "regimeType": "SA"
+    |}
                """.stripMargin
 
   def getJsonWithInvalidReference(
@@ -104,43 +104,43 @@ class GenerateQuoteRequestSpec extends AnyWordSpec with Matchers {
     quoteType: String = "instalmentAmount",
     regimeType: String = "SA"
   ) = s"""{
-         |  "customerReference": "$customerReference",
-         |  "channelIdentifier": "selfService",
-         |  "plan": {
-         |    "quoteType": "$quoteType",
-         |    "quoteDate": "2021-05-13",
-         |    "instalmentStartDate": "2021-05-13",
-         |    "instalmentAmount": $instalmentAmount,
-         |    "frequency": "annually",
-         |    "duration": 12,
-         |    "initialPaymentAmount": $initialPaymentAmount,
-         |    "initialPaymentDate": "2021-05-13",
-         |    "paymentPlanType": "timeToPay"
-         |  },
-         |  "customerPostCodes": [
-         |    {
-         |      "addressPostcode": "$addressPostcode",
-         |      "postcodeDate": "2021-05-13"
-         |    }
-         |  ],
-         |  "debtItemCharges": [
-         |    {
-         |      "debtItemChargeId": "$debtItemChargeId",
-         |      "mainTrans": "5330",
-         |      "subTrans": "1180",
-         |      "originalDebtAmount": $originalDebtAmount,
-         |      "interestStartDate": "2021-05-13",
-         |      "paymentHistory": [
-         |        {
-         |          "paymentDate": "2021-05-13",
-         |          "paymentAmount": $paymentAmount
-         |        }
-         |      ],
-         |      "dueDate": "2021-05-13"
-         |    }
-         |  ],
-         |  "regimeType": "$regimeType"
-         |}
+    |  "customerReference": "$customerReference",
+    |  "channelIdentifier": "selfService",
+    |  "plan": {
+    |    "quoteType": "$quoteType",
+    |    "quoteDate": "2021-05-13",
+    |    "instalmentStartDate": "2021-05-13",
+    |    "instalmentAmount": $instalmentAmount,
+    |    "frequency": "annually",
+    |    "duration": 12,
+    |    "initialPaymentAmount": $initialPaymentAmount,
+    |    "initialPaymentDate": "2021-05-13",
+    |    "paymentPlanType": "timeToPay"
+    |  },
+    |  "customerPostCodes": [
+    |    {
+    |      "addressPostcode": "$addressPostcode",
+    |      "postcodeDate": "2021-05-13"
+    |    }
+    |  ],
+    |  "debtItemCharges": [
+    |    {
+    |      "debtItemChargeId": "$debtItemChargeId",
+    |      "mainTrans": "5330",
+    |      "subTrans": "1180",
+    |      "originalDebtAmount": $originalDebtAmount,
+    |      "interestStartDate": "2021-05-13",
+    |      "paymentHistory": [
+    |        {
+    |          "paymentDate": "2021-05-13",
+    |          "paymentAmount": $paymentAmount
+    |        }
+    |      ],
+    |      "dueDate": "2021-05-13"
+    |    }
+    |  ],
+    |  "regimeType": "$regimeType"
+    |}
              """.stripMargin
 
   "GenerateQuoteRequest" should {

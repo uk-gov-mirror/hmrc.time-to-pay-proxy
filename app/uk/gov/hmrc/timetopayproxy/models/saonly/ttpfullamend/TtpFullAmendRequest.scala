@@ -18,8 +18,8 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.ttpfullamend
 
 import cats.data.NonEmptyList
 import play.api.libs.json.{ Format, Json, OFormat }
-import uk.gov.hmrc.timetopayproxy.models._
-import uk.gov.hmrc.timetopayproxy.models.saonly.common._
+import uk.gov.hmrc.timetopayproxy.models.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
 import uk.gov.hmrc.timetopayproxy.utils.json.CatsNonEmptyListJson
 
 case class FullAmendRequest(

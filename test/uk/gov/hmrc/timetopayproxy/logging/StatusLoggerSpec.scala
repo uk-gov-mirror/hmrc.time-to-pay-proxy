@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.logging
 
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import uk.gov.hmrc.http.HeaderCarrier

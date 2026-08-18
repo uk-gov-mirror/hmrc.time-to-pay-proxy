@@ -20,21 +20,21 @@ import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{ postRequestedFor, urlPathEqualTo }
 import com.github.tomakehurst.wiremock.http.RequestMethod.{ POST, PUT }
-import play.api.libs.json._
-import play.api.libs.ws.{ WSRequest, WSResponse }
+import play.api.libs.json.*
+import play.api.libs.ws.{ WSRequest, WSResponse, writeableOf_JsValue }
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.affordablequotes.{ AffordableQuoteResponse, AffordableQuotesRequest }
 import uk.gov.hmrc.timetopayproxy.models.currency.GbpPounds
 import uk.gov.hmrc.timetopayproxy.models.error.TtppErrorResponse
-import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi._
-import uk.gov.hmrc.timetopayproxy.models.saonly.common._
-import uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus._
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel._
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpfullamend._
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpinform._
+import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpfullamend.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpinform.*
 import uk.gov.hmrc.timetopayproxy.support.IntegrationBaseSpec
-import uk.gov.hmrc.timetopayproxy.testutils.TestOnlyJsonFormats._
+import uk.gov.hmrc.timetopayproxy.testutils.TestOnlyJsonFormats.*
 
 import java.time.{ LocalDate, LocalDateTime }
 import scala.concurrent.ExecutionContext
@@ -253,7 +253,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
             val expectedTtppErrorResponse: TtppErrorResponse = TtppErrorResponse(
               statusCode = 400,
               errorMessage =
-                "Invalid AffordableQuotesRequest payload: Payload has a missing field or an invalid format. Field name: debtItemCharges. "
+                "Invalid AffordableQuotesRequest payload: Payload has a missing field or an invalid format. Field name: customerPostcodes. "
             )
 
             response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -267,33 +267,33 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
             val invalidRequestBody: JsValue =
               Json
                 .parse("""{
-                         |	"channelIdentifier": "eSSTTP",
-                         |	"paymentPlanAffordableAmount": 1,
-                         |	"paymentPlanFrequency": "Monthly",
-                         |	"paymentPlanMaxLength": 6,
-                         |	"paymentPlanMinLength": 1,
-                         |	"accruedDebtInterest": 1,
-                         |	"paymentPlanStartDate": "2022-05-30",
-                         |	"initialPaymentDate": "2022-05-30",
-                         |	"initialPaymentAmount": 8999,
-                         |	"debtItemCharges": [
-                         |		{
-                         |			"mainTrans": "1545",
-                         |			"subTrans": "2000",
-                         |			"outstandingDebtAmount": 9000,
-                         |			"interestStartDate": "2022-08-02",
-                         |			"debtItemOriginalDueDate": "2021-05-22",
-                         |      "isInterestBearingCharge": true,
-                         |      "useChargeReference": false
-                         |		}
-                         |	],
-                         |	"customerPostcodes": [
-                         |		{
-                         |			"addressPostcode": "TW3 4QQ",
-                         |			"postcodeDate": "2019-07-06"
-                         |		}
-                         |	]
-                         |}""".stripMargin)
+                  |	"channelIdentifier": "eSSTTP",
+                  |	"paymentPlanAffordableAmount": 1,
+                  |	"paymentPlanFrequency": "Monthly",
+                  |	"paymentPlanMaxLength": 6,
+                  |	"paymentPlanMinLength": 1,
+                  |	"accruedDebtInterest": 1,
+                  |	"paymentPlanStartDate": "2022-05-30",
+                  |	"initialPaymentDate": "2022-05-30",
+                  |	"initialPaymentAmount": 8999,
+                  |	"debtItemCharges": [
+                  |		{
+                  |			"mainTrans": "1545",
+                  |			"subTrans": "2000",
+                  |			"outstandingDebtAmount": 9000,
+                  |			"interestStartDate": "2022-08-02",
+                  |			"debtItemOriginalDueDate": "2021-05-22",
+                  |      "isInterestBearingCharge": true,
+                  |      "useChargeReference": false
+                  |		}
+                  |	],
+                  |	"customerPostcodes": [
+                  |		{
+                  |			"addressPostcode": "TW3 4QQ",
+                  |			"postcodeDate": "2019-07-06"
+                  |		}
+                  |	]
+                  |}""".stripMargin)
                 .as[JsObject]
 
             val response: WSResponse = await(
@@ -317,32 +317,32 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
             val invalidRequestBody: JsValue =
               Json
                 .parse("""{
-                         |	"channelIdentifier": "eSSTTP",
-                         |	"paymentPlanAffordableAmount": 1,
-                         |	"paymentPlanFrequency": "Monthly",
-                         |	"paymentPlanMaxLength": true,
-                         |	"paymentPlanMinLength": 1,
-                         |	"accruedDebtInterest": 1,
-                         |	"paymentPlanStartDate": "2022-05-30",
-                         |	"initialPaymentDate": "2022-05-30",
-                         |	"initialPaymentAmount": 8999,
-                         |	"debtItemCharges": [
-                         |		{
-                         |  		"debtItemChargeId": "ChargeRef 0745_1",
-                         |			"mainTrans": "1545",
-                         |			"subTrans": "2000",
-                         |			"outstandingDebtAmount": 9000,
-                         |			"interestStartDate": "2022-08-02",
-                         |			"debtItemOriginalDueDate": "2021-05-22"
-                         |		}
-                         |	],
-                         |	"customerPostcodes": [
-                         |		{
-                         |			"addressPostcode": "TW3 4QQ",
-                         |			"postcodeDate": "2019-07-06"
-                         |		}
-                         |	]
-                         |}""".stripMargin)
+                  |	"channelIdentifier": "eSSTTP",
+                  |	"paymentPlanAffordableAmount": 1,
+                  |	"paymentPlanFrequency": "Monthly",
+                  |	"paymentPlanMaxLength": true,
+                  |	"paymentPlanMinLength": 1,
+                  |	"accruedDebtInterest": 1,
+                  |	"paymentPlanStartDate": "2022-05-30",
+                  |	"initialPaymentDate": "2022-05-30",
+                  |	"initialPaymentAmount": 8999,
+                  |	"debtItemCharges": [
+                  |		{
+                  |  		"debtItemChargeId": "ChargeRef 0745_1",
+                  |			"mainTrans": "1545",
+                  |			"subTrans": "2000",
+                  |			"outstandingDebtAmount": 9000,
+                  |			"interestStartDate": "2022-08-02",
+                  |			"debtItemOriginalDueDate": "2021-05-22"
+                  |		}
+                  |	],
+                  |	"customerPostcodes": [
+                  |		{
+                  |			"addressPostcode": "TW3 4QQ",
+                  |			"postcodeDate": "2019-07-06"
+                  |		}
+                  |	]
+                  |}""".stripMargin)
                 .as[JsObject]
 
             val response: WSResponse = await(
@@ -352,7 +352,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
             val expectedTtppErrorResponse: TtppErrorResponse = TtppErrorResponse(
               statusCode = 400,
               errorMessage =
-                "Invalid AffordableQuotesRequest payload: Payload has a missing field or an invalid format. Field name: paymentPlanMaxLength. "
+                "Invalid AffordableQuotesRequest payload: Payload has a missing field or an invalid format. Field name: useChargeReference. "
             )
 
             response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -866,7 +866,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
             val expectedTtppErrorResponse: TtppErrorResponse = TtppErrorResponse(
               statusCode = 400,
               errorMessage =
-                "Invalid TtpCancelRequestR2 payload: Payload has a missing field or an invalid format. Field name: identifications. "
+                "Invalid TtpCancelRequestR2 payload: Payload has a missing field or an invalid format. Field name: channelIdentifier. "
             )
 
             response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -948,7 +948,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
                   |      }
                   |    ]
                   |  },
-                  |  "channelIdentifier": "eSSTTP"
+                  |  "channelIdentifier": "selfService"
                   |}
                   |""".stripMargin
               )
@@ -960,7 +960,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
               val expectedTtppErrorResponse: TtppErrorResponse = TtppErrorResponse(
                 statusCode = 400,
                 errorMessage =
-                  "Invalid TtpCancelRequestR2 payload: Payload has a missing field or an invalid format. Field name: cancellationDate. "
+                  "Invalid TtpCancelRequestR2 payload: Payload has a missing field or an invalid format. Field name: instalments. "
               )
 
               response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -1021,8 +1021,8 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
                       statusCode = 503,
                       errorMessage =
                         s"""For status code ${responseStatus: Int} for request to POST http://localhost:11111/debts/time-to-pay/cancel: JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left.
-                           |Detail: Validation errors:
-                           |    - For path  , errors: [error.expected.jsobject].""".stripMargin
+                          |Detail: Validation errors:
+                          |    - For path  , errors: [error.expected.jsobject].""".stripMargin
                     )
 
                   response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -1234,7 +1234,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
             val expectedTtppErrorResponse: TtppErrorResponse = TtppErrorResponse(
               statusCode = 400,
               errorMessage =
-                "Invalid TtpInformRequest payload: Payload has a missing field or an invalid format. Field name: identifications. "
+                "Invalid TtpInformRequest payload: Payload has a missing field or an invalid format. Field name: channelIdentifier. "
             )
 
             response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -1253,12 +1253,19 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
                   |    "paymentDay": 28,
                   |    "upfrontPaymentAmount": 123.45,
                   |    "startDate": "2025-10-15",
+                  |    "frequency": "single",
+                  |    "ttpEndDate": "1980-10-11",
+                  |    "arrangementAgreedDate": "1970-01-01",
                   |    "debtItemCharges": [{
                   |      "debtItemChargeId": "some-charge-id",
                   |      "chargeSource": "ETMP"
                   |    }]
                   |  },
-                  |  "channelIdentifier": "eSSTTP"
+                  |  "instalments": [{
+                  |    "dueDate": "1969-07-20",
+                  |    "amountDue": 11
+                  |  }],
+                  |  "channelIdentifier": "selfService"
                   |}
                   |""".stripMargin
               )
@@ -1331,8 +1338,8 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
                       statusCode = 503,
                       errorMessage =
                         s"""For status code ${responseStatus: Int} for request to POST http://localhost:11111/debts/time-to-pay/inform: JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left.
-                           |Detail: Validation errors:
-                           |    - For path  , errors: [error.expected.jsobject].""".stripMargin
+                          |Detail: Validation errors:
+                          |    - For path  , errors: [error.expected.jsobject].""".stripMargin
                     )
 
                   response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -1503,7 +1510,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
             val expectedTtppErrorResponse: TtppErrorResponse = TtppErrorResponse(
               statusCode = 400,
               errorMessage =
-                "Invalid FullAmendRequest payload: Payload has a missing field or an invalid format. Field name: identifications. "
+                "Invalid FullAmendRequest payload: Payload has a missing field or an invalid format. Field name: transitioned. "
             )
 
             response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -1599,7 +1606,7 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
                 """
                   |{
                   |  "originalPaymentPlan": {
-                  |    "arrangementAgreedDate": "invalid date",
+                  |    "arrangementAgreedDate": "1969-12-31",
                   |    "ttpEndDate": "2025-02-01",
                   |    "frequency": "monthly",
                   |    "initialPaymentDate": "2025-05-05",
@@ -1840,8 +1847,8 @@ class TimeToPayProxyControllerItSpec extends IntegrationBaseSpec {
                       statusCode = 503,
                       errorMessage =
                         s"""For status code ${responseStatus: Int} for request to POST http://localhost:11111/debts/time-to-pay/full-amend: JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left.
-                           |Detail: Validation errors:
-                           |    - For path  , errors: [error.expected.jsobject].""".stripMargin
+                          |Detail: Validation errors:
+                          |    - For path  , errors: [error.expected.jsobject].""".stripMargin
                     )
 
                   response.json shouldBe Json.toJson(expectedTtppErrorResponse)

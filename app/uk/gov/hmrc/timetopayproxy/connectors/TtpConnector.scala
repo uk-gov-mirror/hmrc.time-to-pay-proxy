@@ -19,12 +19,13 @@ package uk.gov.hmrc.timetopayproxy.connectors
 import cats.data.EitherT
 import com.google.inject.ImplementedBy
 import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads, StringContextOps }
 import uk.gov.hmrc.timetopayproxy.config.{ AppConfig, FeatureSwitch }
 import uk.gov.hmrc.timetopayproxy.connectors.util.httpreadsbuilder.HttpReadsBuilder
 import uk.gov.hmrc.timetopayproxy.logging.{ RequestAwareLogger, StatusLogger }
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.affordablequotes.{ AffordableQuoteResponse, AffordableQuotesRequest }
 import uk.gov.hmrc.timetopayproxy.models.error.ProxyEnvelopeError
 import uk.gov.hmrc.timetopayproxy.models.error.TtppEnvelope.TtppEnvelope
@@ -117,7 +118,7 @@ class DefaultTtpConnector @Inject() (appConfig: AppConfig, httpClient: HttpClien
         httpClient
           .post(url)
           .withBody(Json.toJson(ttppRequest))
-          .setHeader(combinedHeaders: _*)
+          .setHeader(combinedHeaders*)
           .execute[Either[ProxyEnvelopeError, GenerateQuoteResponse]]
       )
     ).logBasedOnStatusCode(logger)
@@ -139,7 +140,7 @@ class DefaultTtpConnector @Inject() (appConfig: AppConfig, httpClient: HttpClien
       EitherT(
         httpClient
           .get(url)
-          .setHeader(combinedHeaders: _*)
+          .setHeader(combinedHeaders*)
           .execute[Either[ProxyEnvelopeError, ViewPlanResponse]]
       )
     ).logBasedOnStatusCode(logger)
@@ -168,7 +169,7 @@ class DefaultTtpConnector @Inject() (appConfig: AppConfig, httpClient: HttpClien
         httpClient
           .put(url)
           .withBody(Json.toJson(updatePlanRequest))
-          .setHeader(combinedHeaders: _*)
+          .setHeader(combinedHeaders*)
           .execute[Either[ProxyEnvelopeError, UpdatePlanResponse]]
       )
     ).logBasedOnStatusCode(logger)
@@ -203,7 +204,7 @@ class DefaultTtpConnector @Inject() (appConfig: AppConfig, httpClient: HttpClien
         httpClient
           .post(url)
           .withBody(Json.toJson(createPlanRequest))
-          .setHeader(headers: _*)
+          .setHeader(headers*)
           .execute[Either[ProxyEnvelopeError, CreatePlanResponse]]
       )
     ).logBasedOnStatusCode(logger)
@@ -225,7 +226,7 @@ class DefaultTtpConnector @Inject() (appConfig: AppConfig, httpClient: HttpClien
         httpClient
           .post(url)
           .withBody(Json.toJson(affordableQuotesRequest))
-          .setHeader(combinedHeaders: _*)
+          .setHeader(combinedHeaders*)
           .execute[Either[ProxyEnvelopeError, AffordableQuoteResponse]]
       )
     ).logBasedOnStatusCode(logger)

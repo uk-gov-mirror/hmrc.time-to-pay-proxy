@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.timetopayproxy.services
 
-import cats.syntax.either._
+import cats.syntax.either.*
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.timetopayproxy.connectors.TtpTestConnector

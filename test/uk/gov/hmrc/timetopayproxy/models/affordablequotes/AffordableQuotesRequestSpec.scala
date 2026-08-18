@@ -17,10 +17,10 @@
 package uk.gov.hmrc.timetopayproxy.models.affordablequotes
 
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsSuccess, JsValue, Json, Reads, Writes }
 import uk.gov.hmrc.timetopayproxy.models.{ CustomerPostCode, DebtItemChargeId, DebtItemChargeSelfServe, Duration, FrequencyCapitalised, IsInterestBearingCharge, PostCode, SsttpRegimeType, UseChargeReference }
-import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps._
+import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps.*
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.Validators
 
 import java.time.LocalDate

@@ -21,7 +21,7 @@ import ch.qos.logback.classic.{ Level, Logger }
 import ch.qos.logback.core.read.ListAppender
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import org.slf4j.LoggerFactory
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -30,6 +30,7 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.ListHasAsScala
+import scala.language.adhocExtensions
 
 class CorrelationIdPopulationActionSpec extends AnyFreeSpec {
 

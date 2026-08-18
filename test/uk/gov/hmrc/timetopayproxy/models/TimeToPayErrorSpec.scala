@@ -17,7 +17,7 @@
 package uk.gov.hmrc.timetopayproxy.models
 
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsSuccess, JsValue, Json, Reads }
 
 final class TimeToPayErrorSpec extends AnyFreeSpec {

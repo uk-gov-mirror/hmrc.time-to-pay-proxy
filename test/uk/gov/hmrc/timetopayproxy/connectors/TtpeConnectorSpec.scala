@@ -30,7 +30,7 @@ import uk.gov.hmrc.timetopayproxy.config.{ AppConfig, FeatureSwitch }
 import uk.gov.hmrc.timetopayproxy.models.error.{ ConnectorError, ProxyEnvelopeError }
 import uk.gov.hmrc.timetopayproxy.models.error.TtppEnvelope.TtppEnvelope
 import uk.gov.hmrc.timetopayproxy.models.featureSwitches.{ InternalAuthEnabled, SaRelease2Enabled }
-import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi._
+import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.SaOnlyRegimeType
 import uk.gov.hmrc.timetopayproxy.models.{ ChargeTypesExcluded, IdType, IdValue, Identification }
 import uk.gov.hmrc.timetopayproxy.support.WireMockUtils
@@ -308,11 +308,11 @@ class TtpeConnectorSpec
 
         def errorResponse(code: String, reason: String): String =
           s"""
-             |{
-             |  "code":"$code",
-             |  "reason":"$reason"
-             |}
-             |""".stripMargin
+            |{
+            |  "code":"$code",
+            |  "reason":"$reason"
+            |}
+            |""".stripMargin
 
         stubPostWithResponseBody(
           "/debts/time-to-pay/charge-info",
@@ -334,10 +334,10 @@ class TtpeConnectorSpec
           "/debts/time-to-pay/charge-info",
           422,
           s"""{
-             |  "code":"UNPROCESSABLE_CONTENT",
-             |  "reason":"Charges with the same charge reference do not share the same data"
-             |}
-             |""".stripMargin
+            |  "code":"UNPROCESSABLE_CONTENT",
+            |  "reason":"Charges with the same charge reference do not share the same data"
+            |}
+            |""".stripMargin
         )
 
         val result: TtppEnvelope[ChargeInfoResponse] = connector.checkChargeInfo(chargeInfoRequest = chargeInfoRequest)

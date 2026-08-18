@@ -18,11 +18,11 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel
 
 import cats.data.NonEmptyList
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.libs.json._
-import uk.gov.hmrc.timetopayproxy.models._
+import org.scalatest.matchers.should.Matchers.shouldBe
+import play.api.libs.json.*
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.currency.GbpPounds
-import uk.gov.hmrc.timetopayproxy.models.saonly.common._
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.Validators.TimeToPayProxy.TtpCancel.Proposed
 
 import java.time.LocalDate
@@ -269,50 +269,50 @@ class TtpCancelRequestR2Spec extends AnyFreeSpec {
       "should throw an error" - {
         "when trying to parse an invalid frequency and channelIdentifier" in {
           val cancelRequestJson = Json.parse("""
-                                               |{
-                                               |  "identifications": [
-                                               |    {
-                                               |      "idType": "UTR",
-                                               |      "idValue": "1234567890"
-                                               |    }
-                                               |  ],
-                                               |  "paymentPlan": {
-                                               |    "arrangementAgreedDate": "2025-05-01",
-                                               |    "ttpEndDate": "2025-11-01",
-                                               |    "initialPaymentDate": "2025-05-05",
-                                               |    "initialPaymentAmount": 150,
-                                               |    "frequency": "TEST",
-                                               |    "cancellationDate": "2025-10-15",
-                                               |    "debtItemCharges": [
-                                               |      {
-                                               |        "debtItemChargeId": "K0000000000001",
-                                               |        "chargeSource": "CESA"
-                                               |      }
-                                               |    ]
-                                               |  },
-                                               |  "instalments": [
-                                               |    {
-                                               |      "dueDate": "2025-06-01",
-                                               |      "amountDue": 300
-                                               |    },
-                                               |    {
-                                               |      "dueDate": "2025-07-01",
-                                               |      "amountDue": 300
-                                               |    },
-                                               |    {
-                                               |      "dueDate": "2025-08-01",
-                                               |      "amountDue": 300
-                                               |    }
-                                               |  ],
-                                               |  "channelIdentifier": "TEST",
-                                               |  "transitioned": true
-                                               |}
-                                               |""".stripMargin)
+            |{
+            |  "identifications": [
+            |    {
+            |      "idType": "UTR",
+            |      "idValue": "1234567890"
+            |    }
+            |  ],
+            |  "paymentPlan": {
+            |    "arrangementAgreedDate": "2025-05-01",
+            |    "ttpEndDate": "2025-11-01",
+            |    "initialPaymentDate": "2025-05-05",
+            |    "initialPaymentAmount": 150,
+            |    "frequency": "TEST",
+            |    "cancellationDate": "2025-10-15",
+            |    "debtItemCharges": [
+            |      {
+            |        "debtItemChargeId": "K0000000000001",
+            |        "chargeSource": "CESA"
+            |      }
+            |    ]
+            |  },
+            |  "instalments": [
+            |    {
+            |      "dueDate": "2025-06-01",
+            |      "amountDue": 300
+            |    },
+            |    {
+            |      "dueDate": "2025-07-01",
+            |      "amountDue": 300
+            |    },
+            |    {
+            |      "dueDate": "2025-08-01",
+            |      "amountDue": 300
+            |    }
+            |  ],
+            |  "channelIdentifier": "TEST",
+            |  "transitioned": true
+            |}
+            |""".stripMargin)
 
           readerFromClients.reads(cancelRequestJson) shouldBe JsError(
             List(
               (
-                JsPath \ "paymentPlan" \ "frequency",
+                JsPath \ "channelIdentifier",
                 List(
                   JsonValidationError(
                     List("error.expected.validenumvalue")
@@ -320,7 +320,7 @@ class TtpCancelRequestR2Spec extends AnyFreeSpec {
                 )
               ),
               (
-                JsPath \ "channelIdentifier",
+                JsPath \ "paymentPlan" \ "frequency",
                 List(
                   JsonValidationError(
                     List("error.expected.validenumvalue")
@@ -333,39 +333,39 @@ class TtpCancelRequestR2Spec extends AnyFreeSpec {
 
         "when a mandatory field, debtItemCharges, is missing " in {
           val cancelRequestJson = Json.parse("""
-                                               |{
-                                               |  "identifications": [
-                                               |    {
-                                               |      "idType": "UTR",
-                                               |      "idValue": "1234567890"
-                                               |    }
-                                               |  ],
-                                               |  "paymentPlan": {
-                                               |    "arrangementAgreedDate": "2025-05-01",
-                                               |    "ttpEndDate": "2025-11-01",
-                                               |    "initialPaymentDate": "2025-05-05",
-                                               |    "initialPaymentAmount": 150,
-                                               |    "frequency": "monthly",
-                                               |    "cancellationDate": "2025-10-15"
-                                               |  },
-                                               |  "instalments": [
-                                               |    {
-                                               |      "dueDate": "2025-06-01",
-                                               |      "amountDue": 300
-                                               |    },
-                                               |    {
-                                               |      "dueDate": "2025-07-01",
-                                               |      "amountDue": 300
-                                               |    },
-                                               |    {
-                                               |      "dueDate": "2025-08-01",
-                                               |      "amountDue": 300
-                                               |    }
-                                               |  ],
-                                               |  "channelIdentifier": "advisor",
-                                               |  "transitioned": true
-                                               |}
-                                               |""".stripMargin)
+            |{
+            |  "identifications": [
+            |    {
+            |      "idType": "UTR",
+            |      "idValue": "1234567890"
+            |    }
+            |  ],
+            |  "paymentPlan": {
+            |    "arrangementAgreedDate": "2025-05-01",
+            |    "ttpEndDate": "2025-11-01",
+            |    "initialPaymentDate": "2025-05-05",
+            |    "initialPaymentAmount": 150,
+            |    "frequency": "monthly",
+            |    "cancellationDate": "2025-10-15"
+            |  },
+            |  "instalments": [
+            |    {
+            |      "dueDate": "2025-06-01",
+            |      "amountDue": 300
+            |    },
+            |    {
+            |      "dueDate": "2025-07-01",
+            |      "amountDue": 300
+            |    },
+            |    {
+            |      "dueDate": "2025-08-01",
+            |      "amountDue": 300
+            |    }
+            |  ],
+            |  "channelIdentifier": "advisor",
+            |  "transitioned": true
+            |}
+            |""".stripMargin)
 
           readerFromClients.reads(cancelRequestJson) shouldBe JsError(
             List(

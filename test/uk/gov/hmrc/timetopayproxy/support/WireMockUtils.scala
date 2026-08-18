@@ -24,7 +24,7 @@ package uk.gov.hmrc.timetopayproxy.support
 import com.codahale.metrics.SharedMetricRegistries
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
@@ -41,7 +41,7 @@ trait WireMockUtils extends BeforeAndAfterEach with BeforeAndAfterAll with Guice
   val wireMockServer: WireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort))
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
-    .configure("auditing.enabled" -> "false")
+    .configure("auditing.enabled" -> "false", "metrics.enabled" -> "false")
     .build()
 
   override def beforeAll(): Unit = {

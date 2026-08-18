@@ -71,7 +71,8 @@ final case class PaymentInformation(paymentMethod: PaymentMethod, paymentReferen
 object PaymentInformation {
   implicit val format: OFormat[PaymentInformation] = Json.format[PaymentInformation]
 }
-case class ChargeSource(value: String)
+
+case class ChargeSource(value: String) extends AnyVal
 
 object ChargeSource {
   implicit val format: Format[ChargeSource] = Json.valueFormat[ChargeSource]
@@ -83,11 +84,12 @@ object ParentChargeReference {
   implicit val format: Format[ParentChargeReference] = Json.valueFormat[ParentChargeReference]
 }
 
-final case class ParentMainTrans(value: String)
+final case class ParentMainTrans(value: String) extends AnyVal
 
 object ParentMainTrans {
   implicit val format: Format[ParentMainTrans] = Json.valueFormat[ParentMainTrans]
 }
+
 final case class CreatePlanDebtItemCharge(
   debtItemChargeId: DebtItemChargeId,
   mainTrans: String,

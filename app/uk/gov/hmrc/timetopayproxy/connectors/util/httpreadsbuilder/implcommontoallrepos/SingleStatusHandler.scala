@@ -34,7 +34,7 @@ private[httpreadsbuilder] final case class SingleStatusHandler[+ServiceError, +R
 
 private[httpreadsbuilder] object SingleStatusHandler {
   def fallbackErrorForUnknownStatusCode[ServiceError](
-    sourceClass: Class[_]
+    sourceClass: Class[?]
   ): SingleStatusHandler[ServiceError, Nothing] =
     SingleStatusHandler { (responseContext, maybeLoggingContext) =>
       val error = HttpReadsBuilderError.UnexpectedStatusCode(sourceClass = sourceClass, responseContext)
@@ -44,7 +44,7 @@ private[httpreadsbuilder] object SingleStatusHandler {
     }
 
   def assumingNoBody[ServiceError, Result](
-    sourceClass: Class[_],
+    sourceClass: Class[?],
     value: Either[ServiceError, Result]
   ): SingleStatusHandler[ServiceError, Result] =
     SingleStatusHandler[ServiceError, Result] { (responseContext, maybeLoggingContext) =>
@@ -82,13 +82,13 @@ private[httpreadsbuilder] object SingleStatusHandler {
     }
 
   def assumingJsonSuccess[ServiceError, Result, ReadableResult: Reads](
-    sourceClass: Class[_],
+    sourceClass: Class[?],
     transform: ReadableResult => Result
   ): SingleStatusHandler[ServiceError, Result] =
     SingleStatusHandler { (responseContext, maybeLoggingContext) =>
       Try(responseContext.response.json).map(_.validate[ReadableResult]) match {
         case Success(JsSuccess(deserialisedBody, _)) => Right(transform(deserialisedBody))
-        case Success(JsError(errs)) =>
+        case Success(JsError(errs))                  =>
           val error = HttpReadsBuilderError.ResponseBodyInvalidJsonStructure(
             sourceClass = sourceClass,
             responseContext,
@@ -112,7 +112,7 @@ private[httpreadsbuilder] object SingleStatusHandler {
     }
 
   def assumingJsonError[Result, ReadableError: Reads, ServiceError](
-    sourceClass: Class[_],
+    sourceClass: Class[?],
     transform: ReadableError => ServiceError
   ): SingleStatusHandler[ServiceError, Result] =
     SingleStatusHandler { (responseContext, maybeLoggingContext: Option[LoggingContext[ServiceError]]) =>

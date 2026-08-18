@@ -20,6 +20,8 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.timetopayproxy.config.AppConfig
 
+import scala.language.adhocExtensions
+
 class MockAppConfig(
   config: Configuration,
   servicesConfig: ServicesConfig,

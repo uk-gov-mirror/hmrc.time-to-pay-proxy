@@ -17,8 +17,8 @@
 package uk.gov.hmrc.timetopayproxy.models
 
 import org.scalatest.freespec.AnyFreeSpecLike
-import org.scalatest.matchers.should.Matchers._
-import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.matchers.should.Matchers.*
+import org.scalatest.prop.TableDrivenPropertyChecks.*
 import play.api.libs.json.{ JsString, JsValue, Json }
 
 class UpdatePlanRequestSpec extends AnyFreeSpecLike {
@@ -39,22 +39,22 @@ class UpdatePlanRequestSpec extends AnyFreeSpecLike {
 
       val updatePlanRequestJson: JsValue =
         Json.parse("""{
-                     |  "customerReference": "custRef123",
-                     |  "planId": "planId1",
-                     |  "updateType": "paymentDetails",
-                     |  "channelIdentifier": "selfService",
-                     |  "planStatus": "Resolved - Completed",
-                     |  "completeReason": "Payment in Full",
-                     |  "cancellationReason": "debt-resolved",
-                     |  "thirdPartyBank": true,
-                     |  "payments":
-                     |  [
-                     |    {
-                     |      "paymentMethod": "Bank payments",
-                     |      "paymentReference": "paymentRef"
-                     |    }
-                     |  ]
-                     |}""".stripMargin)
+          |  "customerReference": "custRef123",
+          |  "planId": "planId1",
+          |  "updateType": "paymentDetails",
+          |  "channelIdentifier": "selfService",
+          |  "planStatus": "Resolved - Completed",
+          |  "completeReason": "Payment in Full",
+          |  "cancellationReason": "debt-resolved",
+          |  "thirdPartyBank": true,
+          |  "payments":
+          |  [
+          |    {
+          |      "paymentMethod": "Bank payments",
+          |      "paymentReference": "paymentRef"
+          |    }
+          |  ]
+          |}""".stripMargin)
 
       "should be deserialized correctly" in {
         updatePlanRequestJson.as[UpdatePlanRequest] shouldBe updatePlanRequest
@@ -81,10 +81,10 @@ class UpdatePlanRequestSpec extends AnyFreeSpecLike {
 
       val updatePlanRequestJson: JsValue =
         Json.parse("""{
-                     |  "customerReference": "custRef123",
-                     |  "planId": "planId1",
-                     |  "updateType": "paymentDetails"
-                     |}""".stripMargin)
+          |  "customerReference": "custRef123",
+          |  "planId": "planId1",
+          |  "updateType": "paymentDetails"
+          |}""".stripMargin)
 
       "should be deserialized correctly" in {
         updatePlanRequestJson.as[UpdatePlanRequest] shouldBe updatePlanRequest
@@ -100,11 +100,11 @@ class UpdatePlanRequestSpec extends AnyFreeSpecLike {
         "should deserialize correctly" in {
           val updatePlanRequestJson: JsValue =
             Json.parse("""{
-                         |  "customerReference": "custRef123",
-                         |  "planId": "planId1",
-                         |  "updateType": "planStatus",
-                         |  "planStatus": "Resolved - Completed"
-                         |}""".stripMargin)
+              |  "customerReference": "custRef123",
+              |  "planId": "planId1",
+              |  "updateType": "planStatus",
+              |  "planStatus": "Resolved - Completed"
+              |}""".stripMargin)
 
           val updatePlanRequest: UpdatePlanRequest =
             UpdatePlanRequest(
@@ -127,10 +127,10 @@ class UpdatePlanRequestSpec extends AnyFreeSpecLike {
         "should throw an error when deserializing" in {
           val updatePlanRequestJson: JsValue =
             Json.parse("""{
-                         |  "customerReference": "custRef123",
-                         |  "planId": "planId1",
-                         |  "updateType": "planStatus"
-                         |}""".stripMargin)
+              |  "customerReference": "custRef123",
+              |  "planId": "planId1",
+              |  "updateType": "planStatus"
+              |}""".stripMargin)
 
           val deserializationError: IllegalArgumentException = intercept[IllegalArgumentException](
             updatePlanRequestJson.as[UpdatePlanRequest]
@@ -155,21 +155,19 @@ class UpdatePlanRequestSpec extends AnyFreeSpecLike {
         PaymentMethod.OnGoingAward -> "Ongoing award"
       )
 
-    "should be deserialized correctly" in {
+    "should be deserialized correctly" in
       forAll(paymentMethodMappings) { case (paymentMethod, entryName) =>
         val paymentMethodJson: JsValue = JsString(entryName)
 
         paymentMethodJson.as[PaymentMethod] shouldBe paymentMethod
       }
-    }
 
-    "should be serialized correctly" in {
+    "should be serialized correctly" in
       forAll(paymentMethodMappings) { case (paymentMethod, entryName) =>
         val paymentMethodJson: JsValue = JsString(entryName)
 
         Json.toJson(paymentMethod) shouldBe paymentMethodJson
       }
-    }
 
     ".values" - {
       val paymentMethodEnums: Seq[PaymentMethod] =

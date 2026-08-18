@@ -21,6 +21,8 @@ import org.scalactic.source.Position
 import org.scalatest.Assertions.fail
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.impl.DebtTransSchemaValidator.SimpleJsonSchema
 
+import scala.annotation.unused
+
 /** Schemas to validate (arbitrary versions of) other schemas, be it OpenApi YAML, JSON etc.
   *
   * This is needed because schema validation libraries
@@ -29,7 +31,7 @@ import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.impl.DebtTransSchema
   */
 private[impl] object MetaSchemas {
 
-  def yamlSchemaSchema(version: String)(implicit pos: Position): SimpleJsonSchema =
+  def yamlSchemaSchema(version: String)(implicit @unused pos: Position): SimpleJsonSchema =
     version match {
       case s"3.0.$_" =>
         // Downloaded from:
@@ -48,7 +50,7 @@ private[impl] object MetaSchemas {
   /** JSON schema to validate the structure of a JSON schema.
     * @param version what JSON schema version we want this meta-schema to target.
     */
-  def jsonSchemaSchema(version: SpecificationVersion)(implicit pos: Position): SimpleJsonSchema =
+  def jsonSchemaSchema(version: SpecificationVersion)(implicit @unused pos: Position): SimpleJsonSchema =
     version match {
       case SpecificationVersion.DRAFT_4 =>
         new SimpleJsonSchema(

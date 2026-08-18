@@ -19,16 +19,16 @@ package uk.gov.hmrc.timetopayproxy.controllers
 import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.http.RequestMethod.POST
 import play.api.libs.json.{ JsNull, JsObject, JsValue, Json }
-import play.api.libs.ws.{ WSRequest, WSResponse }
+import play.api.libs.ws.{ WSRequest, WSResponse, writeableOf_JsValue }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.timetopayproxy.models.currency.GbpPounds
 import uk.gov.hmrc.timetopayproxy.models.error.TtppErrorResponse
-import uk.gov.hmrc.timetopayproxy.models.saonly.common.{ ArrangementAgreedDate, InitialPaymentDate, ProcessingDateTimeInstant, SaOnlyInstalment, TransitionedIndicator, TtpEndDate }
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus.{ ApiErrorResponse, ApiName, ApiStatus, ApiStatusCode }
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel.{ CancellationDate, TtpCancelInformativeError, TtpCancelInternalError, TtpCancelPaymentPlan, TtpCancelRequest, TtpCancelSuccessfulResponse }
-import uk.gov.hmrc.timetopayproxy.models.{ ChannelIdentifier, FrequencyLowercase, IdType, IdValue, Identification, InstalmentDueDate, TimeToPayError, TimeToPayInnerError }
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel.*
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.support.IntegrationBaseSpec
-import uk.gov.hmrc.timetopayproxy.testutils.TestOnlyJsonFormats._
+import uk.gov.hmrc.timetopayproxy.testutils.TestOnlyJsonFormats.*
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
@@ -148,7 +148,7 @@ class TimeToPayProxyControllerSaRelease2DisabledItSpec extends IntegrationBaseSp
           val expectedTtppErrorResponse: TtppErrorResponse = TtppErrorResponse(
             statusCode = 400,
             errorMessage =
-              "Invalid TtpCancelRequest payload: Payload has a missing field or an invalid format. Field name: identifications. "
+              "Invalid TtpCancelRequest payload: Payload has a missing field or an invalid format. Field name: channelIdentifier. "
           )
 
           response.json shouldBe Json.toJson(expectedTtppErrorResponse)
@@ -216,9 +216,20 @@ class TimeToPayProxyControllerSaRelease2DisabledItSpec extends IntegrationBaseSp
                 |    "planSelection": 1,
                 |    "paymentDay": 28,
                 |    "upfrontPaymentAmount": 123.45,
-                |    "startDate": "2025-10-15"
+                |    "startDate": "2025-10-15",
+                |    "frequency": "single",
+                |    "ttpEndDate": "1980-10-11",
+                |    "arrangementAgreedDate": "1970-01-01",
+                |    "debtItemCharges": [{
+                |      "debtItemChargeId": "some-charge-id",
+                |      "chargeSource": "ETMP"
+                |    }]
                 |  },
-                |  "channelIdentifier": "eSSTTP"
+                |  "instalments": [{
+                |    "dueDate": "1969-07-20",
+                |    "amountDue": 11
+                |  }],
+                |  "channelIdentifier": "selfService"
                 |}
                 |""".stripMargin
             )
@@ -291,8 +302,8 @@ class TimeToPayProxyControllerSaRelease2DisabledItSpec extends IntegrationBaseSp
                     statusCode = 503,
                     errorMessage =
                       s"""For status code ${responseStatus: Int} for request to POST http://localhost:11111/debts/time-to-pay/cancel: JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left.
-                         |Detail: Validation errors:
-                         |    - For path  , errors: [error.expected.jsobject].""".stripMargin
+                        |Detail: Validation errors:
+                        |    - For path  , errors: [error.expected.jsobject].""".stripMargin
                   )
 
                 response.json shouldBe Json.toJson(expectedTtppErrorResponse)

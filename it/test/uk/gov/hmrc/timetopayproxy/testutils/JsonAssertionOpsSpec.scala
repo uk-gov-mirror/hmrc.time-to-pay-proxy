@@ -18,8 +18,8 @@ package uk.gov.hmrc.timetopayproxy.testutils
 
 import org.scalatest.exceptions.TestFailedException
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
-import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers.*
+import play.api.libs.json.*
 
 final class JsonAssertionOpsSpec extends AnyFreeSpec {
   "JsonAssertionOps" - {
@@ -42,9 +42,8 @@ final class JsonAssertionOpsSpec extends AnyFreeSpec {
           )
 
           for ((value1, value2) <- cases)
-            s"for $value1 and $value2" in {
+            s"for $value1 and $value2" in
               value1.shouldBeEquivalentTo(value2)
-            }
         }
 
         "for two different simple JSON values" - {
@@ -105,35 +104,35 @@ final class JsonAssertionOpsSpec extends AnyFreeSpec {
           // Mind the sorting of the object fields! (for determinism and easier JSON test maintenance)
           exception.getMessage() shouldBe
             s"""{
-               |  "field1" : [
-               |    "abc",
-               |    1,
-               |    false,
-               |    null,
-               |    true,
-               |    {
-               |      "field1" : "value",
-               |      "field2" : "value"
-               |    }
-               |  ],
-               |  "field2" : [
-               |    "def"
-               |  ],
-               |  "field3" : [
-               |    {
-               |      "field1" : "value"
-               |    },
-               |    {
-               |      "field2" : "value"
-               |    }
-               |  ]
-               |}
-               | was not equal to {
-               |  "field1" : [
-               |    "abc"
-               |  ]
-               |}
-               |""".stripMargin
+              |  "field1" : [
+              |    "abc",
+              |    1,
+              |    false,
+              |    null,
+              |    true,
+              |    {
+              |      "field1" : "value",
+              |      "field2" : "value"
+              |    }
+              |  ],
+              |  "field2" : [
+              |    "def"
+              |  ],
+              |  "field3" : [
+              |    {
+              |      "field1" : "value"
+              |    },
+              |    {
+              |      "field2" : "value"
+              |    }
+              |  ]
+              |}
+              | was not equal to {
+              |  "field1" : [
+              |    "abc"
+              |  ]
+              |}
+              |""".stripMargin
         }
       }
     }

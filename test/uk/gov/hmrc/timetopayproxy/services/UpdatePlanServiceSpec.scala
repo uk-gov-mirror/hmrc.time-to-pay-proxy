@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.timetopayproxy.services
 
-import cats.syntax.either._
+import cats.syntax.either.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.timetopayproxy.connectors.TtpConnector
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.error.{ ConnectorError, ProxyEnvelopeError, TtppEnvelope }
 import uk.gov.hmrc.timetopayproxy.support.UnitSpec
 

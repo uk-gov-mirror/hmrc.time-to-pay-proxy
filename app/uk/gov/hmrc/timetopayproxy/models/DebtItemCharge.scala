@@ -24,7 +24,7 @@ final case class DebtItemChargeId(value: String) extends AnyVal
 
 object DebtItemChargeId extends ValueTypeFormatter {
   implicit val format: Format[DebtItemChargeId] =
-    valueTypeFormatter(DebtItemChargeId.apply, DebtItemChargeId.unapply)
+    valueTypeFormatter(DebtItemChargeId.apply, x => Some(x.value))
 }
 
 final case class DebtItemCharge(

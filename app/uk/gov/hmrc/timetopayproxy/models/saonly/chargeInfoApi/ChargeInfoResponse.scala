@@ -17,8 +17,8 @@
 package uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi
 
 import enumeratum.{ Enum, EnumEntry, PlayJsonEnum }
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 import uk.gov.hmrc.timetopayproxy.config.FeatureSwitch
 import uk.gov.hmrc.timetopayproxy.models.{ ChargeTypesExcluded, Identification }
 
@@ -53,11 +53,11 @@ object ChargeInfoResponseR1 {
   private val reads: Reads[ChargeInfoResponseR1] = Json.reads[ChargeInfoResponseR1]
   private val writes: OWrites[ChargeInfoResponseR1] =
     (
-      (__ \ "processingDateTime").write[LocalDateTime] and
-        (__ \ "identification").write[List[Identification]] and
-        (__ \ "individualDetails").write[IndividualDetails] and
-        (__ \ "addresses").write[List[Address]] and
-        (__ \ "chargeTypeAssessment").write[List[ChargeTypeAssessmentR1]]
+      (__ \ "processingDateTime").write[LocalDateTime]
+        ~ (__ \ "identification").write[List[Identification]]
+        ~ (__ \ "individualDetails").write[IndividualDetails]
+        ~ (__ \ "addresses").write[List[Address]]
+        ~ (__ \ "chargeTypeAssessment").write[List[ChargeTypeAssessmentR1]]
     )(chargeInfoR1 =>
       (
         chargeInfoR1.processingDateTime,

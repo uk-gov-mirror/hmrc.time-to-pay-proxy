@@ -18,8 +18,8 @@ package uk.gov.hmrc.timetopayproxy.connectors
 
 import cats.data.NonEmptyList
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.concurrent.ScalaFutures._
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.concurrent.ScalaFutures.*
+import org.scalatest.matchers.should.Matchers.*
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{ Json, Writes }
 import play.api.test.{ DefaultAwaitTimeout, FutureAwaits }
@@ -28,16 +28,16 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.timetopayproxy.config.{ AppConfig, FeatureSwitch }
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.currency.GbpPounds
 import uk.gov.hmrc.timetopayproxy.models.error.ConnectorError
 import uk.gov.hmrc.timetopayproxy.models.error.TtppEnvelope.TtppEnvelope
 import uk.gov.hmrc.timetopayproxy.models.featureSwitches.InternalAuthEnabled
-import uk.gov.hmrc.timetopayproxy.models.saonly.common._
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus.{ ApiName, ApiStatus, ApiStatusCode }
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel._
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpfullamend._
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpinform._
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpfullamend.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpinform.*
 import uk.gov.hmrc.timetopayproxy.support.WireMockUtils
 
 import java.time.{ Instant, LocalDate }

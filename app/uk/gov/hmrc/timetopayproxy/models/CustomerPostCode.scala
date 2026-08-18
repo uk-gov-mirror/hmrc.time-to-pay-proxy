@@ -23,7 +23,7 @@ final case class PostCode(value: String) extends AnyVal
 
 object PostCode extends ValueTypeFormatter {
   implicit val format: Format[PostCode] =
-    valueTypeFormatter(PostCode.apply, PostCode.unapply)
+    valueTypeFormatter(PostCode.apply, x => Some(x.value))
 }
 
 final case class CustomerPostCode(

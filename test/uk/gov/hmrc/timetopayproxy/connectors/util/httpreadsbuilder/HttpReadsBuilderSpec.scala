@@ -19,8 +19,8 @@ package uk.gov.hmrc.timetopayproxy.connectors.util.httpreadsbuilder
 import org.apache.pekko.http.scaladsl.model.{ StatusCode, StatusCodes }
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
-import org.slf4j.{ Logger => Slf4jLogger }
+import org.scalatest.matchers.should.Matchers.*
+import org.slf4j.Logger as Slf4jLogger
 import play.api.Logger
 import play.api.http.Status
 import play.api.libs.json.{ Json, OFormat }
@@ -72,7 +72,7 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
         stringRepr(builderError)
 
       def stringRepr[ServiceError >: String](builderError: Any): ServiceError =
-        builderError match {
+        builderError.asInstanceOf[Matchable] match {
           case ResponseContext(method, url, response) =>
             val headerLines = response.headers.flatMap(h => h._2.map((h._1, _))).map(h => s"${h._1}: ${h._2}").toList
             val bodyLines = List(if (response.body.nonEmpty) response.body else "<empty body>")
@@ -85,8 +85,8 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
               List("===")
 
             s"""RESPONSE TO: $method $url
-               |${lines.mkString("\n")}""".stripMargin
-          case product: Product with HttpReadsBuilderError[_] =>
+              |${lines.mkString("\n")}""".stripMargin
+          case product: (Product & HttpReadsBuilderError[?]) =>
             val productPairs = product.productElementNames
               .zip(product.productIterator)
               .map(kv => s"${this.stringRepr(kv._1)} = ${this.stringRepr(kv._2)}")
@@ -370,7 +370,7 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             val classChainString: String =
               Iterator
                 // Start with this class, then its parent, then its parent's parent, forever. Lazily computed so it won't throw.
-                .iterate[Class[_]](this.getClass)(_.getDeclaringClass)
+                .iterate[Class[?]](this.getClass)(_.getDeclaringClass)
                 .takeWhile(_ != null)
                 // Written as a takeWhile instead of dropWhile so we won't empty it if this trait is extended elsewhere by mistake.
                 .takeWhile(_ !== classOf[TestDataForCombinations.type])
@@ -512,7 +512,7 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
       }
 
       "(check the test data)" in {
-        import TestDataForCombinations._
+        import TestDataForCombinations.*
 
         unexpectedStatuses2xx should have size 96
         unexpectedStatusesNon2xx should have size 396
@@ -522,7 +522,7 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
         // We won't test .httpReadsNoLogging here because how Kibana handles line breaks would be irrelevant for it.
 
         "then .httpReads" in new TestFixtureForHttpReads {
-          import TestDataForCombinations._
+          import TestDataForCombinations.*
 
           httpReads.read(
             "POST",
@@ -666,19 +666,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
           // The plain log line must make sense and be readable when Kibana strips the line breaks.
           // The URLs should not touch any punctuation.
           stripped shouldBe List(
-            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Right. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-236-wrong-structure #  === #  HTTP 236 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight, #  errs = List((/for236,List(JsonValidationError(List(error.path.missing),List())))) )> . Request made for received HTTP response: POST https://some.domain/for-success-236-wrong-structure . Received HTTP response status: 236. Received HTTP response body not logged for 2xx statuses.""",
+            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Right. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-236-wrong-structure #  === #  HTTP 236 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight, #  errs = List((/for236,List(JsonValidationError(List(error.path.missing),ArraySeq())))) )> . Request made for received HTTP response: POST https://some.domain/for-success-236-wrong-structure . Received HTTP response status: 236. Received HTTP response body not logged for 2xx statuses.""",
             """ERROR | HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Right. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-236-not-json #  === #  HTTP 236 Custom Status # #  some body that's not JSON #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight, #  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'some': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false') #   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5] )> . Request made for received HTTP response: POST https://some.domain/for-success-236-not-json . Received HTTP response status: 236. Received HTTP response body not logged for 2xx statuses.""",
             """ERROR | Body of received HTTP response is not empty. Originally expected to turn response into a Right. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-265-wrong-structure #  === #  HTTP 265 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight )> . Request made for received HTTP response: POST https://some.domain/for-success-265-wrong-structure . Received HTTP response status: 265. Received HTTP response body not logged for 2xx statuses.""",
             """ERROR | Body of received HTTP response is not empty. Originally expected to turn response into a Right. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-265-not-json #  === #  HTTP 265 Custom Status # #  some body that's not JSON #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight )> . Request made for received HTTP response: POST https://some.domain/for-success-265-not-json . Received HTTP response status: 265. Received HTTP response body not logged for 2xx statuses.""",
-            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Right. Detail: Validation errors:     - For path /for419 , errors: [error.path.missing]. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-419-wrong-structure #  === #  HTTP 419 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight, #  errs = List((/for419,List(JsonValidationError(List(error.path.missing),List())))) )> . Request made for received HTTP response: POST https://some.domain/for-success-419-wrong-structure . Received HTTP response status: 419. Received HTTP response body: {}""",
+            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Right. Detail: Validation errors:     - For path /for419 , errors: [error.path.missing]. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-419-wrong-structure #  === #  HTTP 419 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight, #  errs = List((/for419,List(JsonValidationError(List(error.path.missing),ArraySeq())))) )> . Request made for received HTTP response: POST https://some.domain/for-success-419-wrong-structure . Received HTTP response status: 419. Received HTTP response body: {}""",
             """ERROR | HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Right. Detail: com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'some': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5] Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-419-not-json #  === #  HTTP 419 Custom Status # #  some body that's not JSON #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight, #  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'some': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false') #   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5] )> . Request made for received HTTP response: POST https://some.domain/for-success-419-not-json . Received HTTP response status: 419. Received HTTP response body: some body that's not JSON""",
             """ERROR | Body of received HTTP response is not empty. Originally expected to turn response into a Right. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-445-wrong-structure #  === #  HTTP 445 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight )> . Request made for received HTTP response: POST https://some.domain/for-success-445-wrong-structure . Received HTTP response status: 445. Received HTTP response body: {}""",
             """ERROR | Body of received HTTP response is not empty. Originally expected to turn response into a Right. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-success-445-not-json #  === #  HTTP 445 Custom Status # #  some body that's not JSON #  ===, #  whichEitherWasExpected = OriginallyMeantToBeRight )> . Request made for received HTTP response: POST https://some.domain/for-success-445-not-json . Received HTTP response status: 445. Received HTTP response body: some body that's not JSON""",
             """WARN | Valid and expected error response was received from HTTP call. Request made for received HTTP response: POST https://some.domain/for-failure-109-correct-structure-for-warning-log . Received HTTP response status: 109. Received HTTP response body: {"for109":"example"}""",
-            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left. Detail: Validation errors:     - For path /for109 , errors: [error.path.missing]. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-failure-109-wrong-structure #  === #  HTTP 109 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeLeft, #  errs = List((/for109,List(JsonValidationError(List(error.path.missing),List())))) )> . Request made for received HTTP response: POST https://some.domain/for-failure-109-wrong-structure . Received HTTP response status: 109. Received HTTP response body: {}""",
+            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left. Detail: Validation errors:     - For path /for109 , errors: [error.path.missing]. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-failure-109-wrong-structure #  === #  HTTP 109 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeLeft, #  errs = List((/for109,List(JsonValidationError(List(error.path.missing),ArraySeq())))) )> . Request made for received HTTP response: POST https://some.domain/for-failure-109-wrong-structure . Received HTTP response status: 109. Received HTTP response body: {}""",
             """ERROR | HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Left. Detail: com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'some': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5] Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-failure-109-not-json #  === #  HTTP 109 Custom Status # #  some body that's not JSON #  ===, #  whichEitherWasExpected = OriginallyMeantToBeLeft, #  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'some': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false') #   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5] )> . Request made for received HTTP response: POST https://some.domain/for-failure-109-not-json . Received HTTP response status: 109. Received HTTP response body: some body that's not JSON""",
             """WARN | Valid and expected error response was received from HTTP call. Request made for received HTTP response: POST https://some.domain/for-failure-211-correct-structure-for-warning-log . Received HTTP response status: 211. Received HTTP response body not logged for 2xx statuses.""",
-            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-failure-211-wrong-structure #  === #  HTTP 211 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeLeft, #  errs = List((/for211,List(JsonValidationError(List(error.path.missing),List())))) )> . Request made for received HTTP response: POST https://some.domain/for-failure-211-wrong-structure . Received HTTP response status: 211. Received HTTP response body not logged for 2xx statuses.""",
+            """ERROR | JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-failure-211-wrong-structure #  === #  HTTP 211 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeLeft, #  errs = List((/for211,List(JsonValidationError(List(error.path.missing),ArraySeq())))) )> . Request made for received HTTP response: POST https://some.domain/for-failure-211-wrong-structure . Received HTTP response status: 211. Received HTTP response body not logged for 2xx statuses.""",
             """ERROR | HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Left. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-failure-211-not-json #  === #  HTTP 211 Custom Status # #  some body that's not JSON #  ===, #  whichEitherWasExpected = OriginallyMeantToBeLeft, #  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'some': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false') #   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5] )> . Request made for received HTTP response: POST https://some.domain/for-failure-211-not-json . Received HTTP response status: 211. Received HTTP response body not logged for 2xx statuses.""",
             """WARN | Valid and expected error response was received from HTTP call. Request made for received HTTP response: POST https://some.domain/for-failure-277-correct-structure-for-warning-log . Received HTTP response status: 277. Received HTTP response body not logged for 2xx statuses.""",
             """ERROR | Body of received HTTP response is not empty. Originally expected to turn response into a Left. Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty( #  sourceClass = class java.lang.Thread, #  responseContext = RESPONSE TO: POST https://some.domain/for-failure-277-wrong-structure #  === #  HTTP 277 Custom Status # #  {} #  ===, #  whichEitherWasExpected = OriginallyMeantToBeLeft )> . Request made for received HTTP response: POST https://some.domain/for-failure-277-wrong-structure . Received HTTP response status: 277. Received HTTP response body not logged for 2xx statuses.""",
@@ -758,27 +758,27 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
                   |#  {}
                   |#  ===,
                   |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                  |#  errs = List((/for236,List(JsonValidationError(List(error.path.missing),List()))))
+                  |#  errs = List((/for236,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
                   |)""".stripMargin
               )
 
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""JSON structure is not valid in received HTTP response. Originally expected to turn response into a Right.
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 236 Custom Status
-                     |#
-                     |#  {}
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                     |#  errs = List((/for236,List(JsonValidationError(List(error.path.missing),List()))))
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 236.
-                     |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 236 Custom Status
+                    |#
+                    |#  {}
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight,
+                    |#  errs = List((/for236,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 236.
+                    |Received HTTP response body not logged for 2xx statuses.""".stripMargin
               )
             }
 
@@ -798,7 +798,7 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
                   |#  {}
                   |#  ===,
                   |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                  |#  errs = List((/for236,List(JsonValidationError(List(error.path.missing),List()))))
+                  |#  errs = List((/for236,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
                   |)""".stripMargin
               )
 
@@ -830,19 +830,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""Body of received HTTP response is not empty. Originally expected to turn response into a Right.
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 265 Custom Status
-                     |#
-                     |#  {}
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 265.
-                     |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 265 Custom Status
+                    |#
+                    |#  {}
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 265.
+                    |Received HTTP response body not logged for 2xx statuses.""".stripMargin
               )
             }
 
@@ -887,29 +887,29 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
                   |#  {}
                   |#  ===,
                   |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                  |#  errs = List((/for419,List(JsonValidationError(List(error.path.missing),List()))))
+                  |#  errs = List((/for419,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
                   |)""".stripMargin
               )
 
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""JSON structure is not valid in received HTTP response. Originally expected to turn response into a Right.
-                     |Detail: Validation errors:
-                     |    - For path /for419 , errors: [error.path.missing].
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 419 Custom Status
-                     |#
-                     |#  {}
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                     |#  errs = List((/for419,List(JsonValidationError(List(error.path.missing),List()))))
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 419.
-                     |Received HTTP response body: {}""".stripMargin
+                    |Detail: Validation errors:
+                    |    - For path /for419 , errors: [error.path.missing].
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 419 Custom Status
+                    |#
+                    |#  {}
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight,
+                    |#  errs = List((/for419,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 419.
+                    |Received HTTP response body: {}""".stripMargin
               )
             }
 
@@ -929,7 +929,7 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
                   |#  {}
                   |#  ===,
                   |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                  |#  errs = List((/for419,List(JsonValidationError(List(error.path.missing),List()))))
+                  |#  errs = List((/for419,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
                   |)""".stripMargin
               )
 
@@ -961,19 +961,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""Body of received HTTP response is not empty. Originally expected to turn response into a Right.
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 445 Custom Status
-                     |#
-                     |#  {}
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 445.
-                     |Received HTTP response body: {}""".stripMargin
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 445 Custom Status
+                    |#
+                    |#  {}
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 445.
+                    |Received HTTP response body: {}""".stripMargin
               )
             }
 
@@ -1028,21 +1028,21 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Right.
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 236 Custom Status
-                     |#
-                     |#  TEXT
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                     |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
-                     |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 236.
-                     |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 236 Custom Status
+                    |#
+                    |#  TEXT
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight,
+                    |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+                    |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 236.
+                    |Received HTTP response body not logged for 2xx statuses.""".stripMargin
               )
             }
 
@@ -1095,19 +1095,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""Body of received HTTP response is not empty. Originally expected to turn response into a Right.
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 265 Custom Status
-                     |#
-                     |#  TEXT
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 265.
-                     |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 265 Custom Status
+                    |#
+                    |#  TEXT
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 265.
+                    |Received HTTP response body not logged for 2xx statuses.""".stripMargin
               )
             }
 
@@ -1120,15 +1120,15 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
               result shouldBe Left(
                 s"""ResponseBodyNotEmpty(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 265 Custom Status
-                   |#
-                   |#  TEXT
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeRight
-                   |)""".stripMargin
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 265 Custom Status
+                  |#
+                  |#  TEXT
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeRight
+                  |)""".stripMargin
               )
 
               allCapturedLogs shouldBe Nil
@@ -1160,23 +1160,23 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Right.
-                     |Detail: com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
-                     | at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 419 Custom Status
-                     |#
-                     |#  TEXT
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight,
-                     |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
-                     |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 419.
-                     |Received HTTP response body: TEXT""".stripMargin
+                    |Detail: com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+                    | at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 419 Custom Status
+                    |#
+                    |#  TEXT
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight,
+                    |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+                    |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 419.
+                    |Received HTTP response body: TEXT""".stripMargin
               )
             }
 
@@ -1229,19 +1229,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
               allCapturedLogs shouldBe List(
                 "ERROR" ->
                   s"""Body of received HTTP response is not empty. Originally expected to turn response into a Right.
-                     |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP 445 Custom Status
-                     |#
-                     |#  TEXT
-                     |#  ===,
-                     |#  whichEitherWasExpected = OriginallyMeantToBeRight
-                     |)> .
-                     |Request made for received HTTP response: MYMETHOD some/url .
-                     |Received HTTP response status: 445.
-                     |Received HTTP response body: TEXT""".stripMargin
+                    |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP 445 Custom Status
+                    |#
+                    |#  TEXT
+                    |#  ===,
+                    |#  whichEitherWasExpected = OriginallyMeantToBeRight
+                    |)> .
+                    |Request made for received HTTP response: MYMETHOD some/url .
+                    |Received HTTP response status: 445.
+                    |Received HTTP response body: TEXT""".stripMargin
               )
 
               allCapturedLogs.toString should include("TEXT") // This success is not a 2xx, so it's safe to log.
@@ -1293,9 +1293,9 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "WARN" ->
                 s"""Valid and expected error response was received from HTTP call.
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 109.
-                   |Received HTTP response body: ${Err109Json.Wrapper.exampleBody: String}""".stripMargin
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 109.
+                  |Received HTTP response body: ${Err109Json.Wrapper.exampleBody: String}""".stripMargin
             )
           }
         }
@@ -1316,29 +1316,29 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
                 |#  {}
                 |#  ===,
                 |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
-                |#  errs = List((/for109,List(JsonValidationError(List(error.path.missing),List()))))
+                |#  errs = List((/for109,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
                 |)""".stripMargin
             )
 
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left.
-                   |Detail: Validation errors:
-                   |    - For path /for109 , errors: [error.path.missing].
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 109 Custom Status
-                   |#
-                   |#  {}
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
-                   |#  errs = List((/for109,List(JsonValidationError(List(error.path.missing),List()))))
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 109.
-                   |Received HTTP response body: {}""".stripMargin
+                  |Detail: Validation errors:
+                  |    - For path /for109 , errors: [error.path.missing].
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 109 Custom Status
+                  |#
+                  |#  {}
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
+                  |#  errs = List((/for109,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 109.
+                  |Received HTTP response body: {}""".stripMargin
             )
           }
         }
@@ -1368,23 +1368,23 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Left.
-                   |Detail: com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
-                   | at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 109 Custom Status
-                   |#
-                   |#  TEXT
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
-                   |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
-                   |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 109.
-                   |Received HTTP response body: TEXT""".stripMargin
+                  |Detail: com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+                  | at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 109 Custom Status
+                  |#
+                  |#  TEXT
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
+                  |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+                  |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 109.
+                  |Received HTTP response body: TEXT""".stripMargin
             )
           }
 
@@ -1415,9 +1415,9 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "WARN" ->
                 s"""Valid and expected error response was received from HTTP call.
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 211.
-                   |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 211.
+                  |Received HTTP response body not logged for 2xx statuses.""".stripMargin
             )
           }
         }
@@ -1439,27 +1439,27 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
                 |#  {}
                 |#  ===,
                 |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
-                |#  errs = List((/for211,List(JsonValidationError(List(error.path.missing),List()))))
+                |#  errs = List((/for211,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
                 |)""".stripMargin
             )
 
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""JSON structure is not valid in received HTTP response. Originally expected to turn response into a Left.
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 211 Custom Status
-                   |#
-                   |#  {}
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
-                   |#  errs = List((/for211,List(JsonValidationError(List(error.path.missing),List()))))
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 211.
-                   |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyInvalidJsonStructure(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 211 Custom Status
+                  |#
+                  |#  {}
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
+                  |#  errs = List((/for211,List(JsonValidationError(List(error.path.missing),ArraySeq()))))
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 211.
+                  |Received HTTP response body not logged for 2xx statuses.""".stripMargin
             )
           }
         }
@@ -1474,37 +1474,37 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
             result shouldBe Left(
               s"""ResponseBodyNotJson(
-                 |#  sourceClass = class java.lang.Thread,
-                 |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                 |#  ===
-                 |#  HTTP 211 Custom Status
-                 |#
-                 |#  TEXT
-                 |#  ===,
-                 |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
-                 |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
-                 |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
-                 |)""".stripMargin
+                |#  sourceClass = class java.lang.Thread,
+                |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                |#  ===
+                |#  HTTP 211 Custom Status
+                |#
+                |#  TEXT
+                |#  ===,
+                |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
+                |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+                |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
+                |)""".stripMargin
             )
 
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""HTTP body is not JSON in received HTTP response. Originally expected to turn response into a Left.
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 211 Custom Status
-                   |#
-                   |#  TEXT
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
-                   |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
-                   |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 211.
-                   |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotJson(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 211 Custom Status
+                  |#
+                  |#  TEXT
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft,
+                  |#  sensitiveException = com.fasterxml.jackson.core.JsonParseException: Unrecognized token 'TEXT': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+                  |#   at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 5]
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 211.
+                  |Received HTTP response body not logged for 2xx statuses.""".stripMargin
             )
           }
         }
@@ -1530,9 +1530,9 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "WARN" ->
                 s"""Valid and expected error response was received from HTTP call.
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 277.
-                   |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 277.
+                  |Received HTTP response body not logged for 2xx statuses.""".stripMargin
             )
           }
         }
@@ -1560,19 +1560,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""Body of received HTTP response is not empty. Originally expected to turn response into a Left.
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 277 Custom Status
-                   |#
-                   |#  {}
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 277.
-                   |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 277 Custom Status
+                  |#
+                  |#  {}
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 277.
+                  |Received HTTP response body not logged for 2xx statuses.""".stripMargin
             )
           }
         }
@@ -1601,19 +1601,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""Body of received HTTP response is not empty. Originally expected to turn response into a Left.
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 277 Custom Status
-                   |#
-                   |#  TEXT
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 277.
-                   |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 277 Custom Status
+                  |#
+                  |#  TEXT
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 277.
+                  |Received HTTP response body not logged for 2xx statuses.""".stripMargin
             )
           }
         }
@@ -1639,9 +1639,9 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "WARN" ->
                 s"""Valid and expected error response was received from HTTP call.
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 477.
-                   |Received HTTP response body: ${Err477NoBody.Singleton.exampleBody: String}""".stripMargin
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 477.
+                  |Received HTTP response body: ${Err477NoBody.Singleton.exampleBody: String}""".stripMargin
             )
           }
         }
@@ -1668,19 +1668,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""Body of received HTTP response is not empty. Originally expected to turn response into a Left.
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 477 Custom Status
-                   |#
-                   |#  {}
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 477.
-                   |Received HTTP response body: {}""".stripMargin
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 477 Custom Status
+                  |#
+                  |#  {}
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 477.
+                  |Received HTTP response body: {}""".stripMargin
             )
           }
         }
@@ -1708,19 +1708,19 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
             allCapturedLogs shouldBe List(
               "ERROR" ->
                 s"""Body of received HTTP response is not empty. Originally expected to turn response into a Left.
-                   |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
-                   |#  sourceClass = class java.lang.Thread,
-                   |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                   |#  ===
-                   |#  HTTP 477 Custom Status
-                   |#
-                   |#  TEXT
-                   |#  ===,
-                   |#  whichEitherWasExpected = OriginallyMeantToBeLeft
-                   |)> .
-                   |Request made for received HTTP response: MYMETHOD some/url .
-                   |Received HTTP response status: 477.
-                   |Received HTTP response body: TEXT""".stripMargin
+                  |Returning: [DEEMED SAFE BY TEST LOGIC] <ResponseBodyNotEmpty(
+                  |#  sourceClass = class java.lang.Thread,
+                  |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                  |#  ===
+                  |#  HTTP 477 Custom Status
+                  |#
+                  |#  TEXT
+                  |#  ===,
+                  |#  whichEitherWasExpected = OriginallyMeantToBeLeft
+                  |)> .
+                  |Request made for received HTTP response: MYMETHOD some/url .
+                  |Received HTTP response status: 477.
+                  |Received HTTP response body: TEXT""".stripMargin
             )
           }
         }
@@ -1743,31 +1743,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for236":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for236":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpected2xxStatus): String}
-                       |#
-                       |#  {"for236":true}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpected2xxStatus: Int}.
-                       |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpected2xxStatus): String}
+                      |#
+                      |#  {"for236":true}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpected2xxStatus: Int}.
+                      |Received HTTP response body not logged for 2xx statuses.""".stripMargin
                 )
               }
 
@@ -1780,14 +1780,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for236":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for236":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -1809,31 +1809,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for419":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for419":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpected2xxStatus): String}
-                       |#
-                       |#  {"for419":true}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpected2xxStatus: Int}.
-                       |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpected2xxStatus): String}
+                      |#
+                      |#  {"for419":true}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpected2xxStatus: Int}.
+                      |Received HTTP response body not logged for 2xx statuses.""".stripMargin
                 )
               }
 
@@ -1846,14 +1846,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for419":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for419":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -1875,31 +1875,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for109":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for109":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpected2xxStatus): String}
-                       |#
-                       |#  {"for109":"example"}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpected2xxStatus: Int}.
-                       |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpected2xxStatus): String}
+                      |#
+                      |#  {"for109":"example"}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpected2xxStatus: Int}.
+                      |Received HTTP response body not logged for 2xx statuses.""".stripMargin
                 )
               }
 
@@ -1912,14 +1912,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for109":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for109":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -1945,31 +1945,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for211":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for211":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpected2xxStatus): String}
-                       |#
-                       |#  {"for211":"example"}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpected2xxStatus: Int}.
-                       |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpected2xxStatus): String}
+                      |#
+                      |#  {"for211":"example"}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpected2xxStatus: Int}.
+                      |Received HTTP response body not logged for 2xx statuses.""".stripMargin
                 )
               }
 
@@ -1986,14 +1986,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {"for211":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {"for211":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2013,31 +2013,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpected2xxStatus): String}
-                       |#
-                       |#  {}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpected2xxStatus: Int}.
-                       |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpected2xxStatus): String}
+                      |#
+                      |#  {}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpected2xxStatus: Int}.
+                      |Received HTTP response body not logged for 2xx statuses.""".stripMargin
                 )
               }
 
@@ -2050,14 +2050,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  {}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  {}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2077,31 +2077,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  SOMETEXT
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  SOMETEXT
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpected2xxStatus): String}
-                       |#
-                       |#  SOMETEXT
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpected2xxStatus: Int}.
-                       |Received HTTP response body not logged for 2xx statuses.""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpected2xxStatus): String}
+                      |#
+                      |#  SOMETEXT
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpected2xxStatus: Int}.
+                      |Received HTTP response body not logged for 2xx statuses.""".stripMargin
                 )
               }
 
@@ -2114,14 +2114,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpected2xxStatus): String}
-                     |#
-                     |#  SOMETEXT
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpected2xxStatus): String}
+                    |#
+                    |#  SOMETEXT
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2148,31 +2148,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for236":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for236":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                       |#
-                       |#  {"for236":true}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
-                       |Received HTTP response body: ${Succ236Json.Wrapper.exampleBody: String}""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                      |#
+                      |#  {"for236":true}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
+                      |Received HTTP response body: ${Succ236Json.Wrapper.exampleBody: String}""".stripMargin
                 )
               }
 
@@ -2185,14 +2185,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for236":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for236":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2214,31 +2214,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for419":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for419":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                       |#
-                       |#  {"for419":true}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
-                       |Received HTTP response body: ${Succ419Json.Wrapper.exampleBody: String}""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                      |#
+                      |#  {"for419":true}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
+                      |Received HTTP response body: ${Succ419Json.Wrapper.exampleBody: String}""".stripMargin
                 )
               }
 
@@ -2251,14 +2251,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for419":true}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for419":true}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2280,31 +2280,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for109":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for109":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                       |#
-                       |#  {"for109":"example"}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
-                       |Received HTTP response body: ${Err109Json.Wrapper.exampleBody: String}""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                      |#
+                      |#  {"for109":"example"}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
+                      |Received HTTP response body: ${Err109Json.Wrapper.exampleBody: String}""".stripMargin
                 )
               }
 
@@ -2317,14 +2317,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for109":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for109":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2350,31 +2350,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for211":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for211":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                       |#
-                       |#  {"for211":"example"}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
-                       |Received HTTP response body: ${Err211JsonTransf.ToTransform.exampleBody: String}""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                      |#
+                      |#  {"for211":"example"}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
+                      |Received HTTP response body: ${Err211JsonTransf.ToTransform.exampleBody: String}""".stripMargin
                 )
               }
 
@@ -2391,14 +2391,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {"for211":"example"}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {"for211":"example"}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2418,31 +2418,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                       |#
-                       |#  {}
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
-                       |Received HTTP response body: {}""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                      |#
+                      |#  {}
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
+                      |Received HTTP response body: {}""".stripMargin
                 )
               }
 
@@ -2455,14 +2455,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  {}
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  {}
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil
@@ -2482,31 +2482,31 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  SOMETEXT
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  SOMETEXT
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe List(
                   "ERROR" ->
                     s"""HTTP status is unexpected in received HTTP response. Originally expected to turn response into a Left.
-                       |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
-                       |#  sourceClass = class java.lang.Thread,
-                       |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                       |#  ===
-                       |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                       |#
-                       |#  SOMETEXT
-                       |#  ===
-                       |)> .
-                       |Request made for received HTTP response: MYMETHOD some/url .
-                       |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
-                       |Received HTTP response body: SOMETEXT""".stripMargin
+                      |Returning: [DEEMED SAFE BY TEST LOGIC] <UnexpectedStatusCode(
+                      |#  sourceClass = class java.lang.Thread,
+                      |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                      |#  ===
+                      |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                      |#
+                      |#  SOMETEXT
+                      |#  ===
+                      |)> .
+                      |Request made for received HTTP response: MYMETHOD some/url .
+                      |Received HTTP response status: ${unexpectedNon2xxStatus: Int}.
+                      |Received HTTP response body: SOMETEXT""".stripMargin
                 )
               }
 
@@ -2519,14 +2519,14 @@ final class HttpReadsBuilderSpec extends AnyFreeSpec with MockFactory {
 
                 result shouldBe Left(
                   s"""UnexpectedStatusCode(
-                     |#  sourceClass = class java.lang.Thread,
-                     |#  responseContext = RESPONSE TO: MYMETHOD some/url
-                     |#  ===
-                     |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
-                     |#
-                     |#  SOMETEXT
-                     |#  ===
-                     |)""".stripMargin
+                    |#  sourceClass = class java.lang.Thread,
+                    |#  responseContext = RESPONSE TO: MYMETHOD some/url
+                    |#  ===
+                    |#  HTTP ${statusString(unexpectedNon2xxStatus): String}
+                    |#
+                    |#  SOMETEXT
+                    |#  ===
+                    |)""".stripMargin
                 )
 
                 allCapturedLogs shouldBe Nil

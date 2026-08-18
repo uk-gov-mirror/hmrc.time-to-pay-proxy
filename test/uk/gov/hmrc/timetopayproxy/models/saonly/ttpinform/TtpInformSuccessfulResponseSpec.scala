@@ -17,11 +17,11 @@
 package uk.gov.hmrc.timetopayproxy.models.saonly.ttpinform
 
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
-import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers.*
+import play.api.libs.json.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.ProcessingDateTimeInstant
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus.{ ApiErrorResponse, ApiName, ApiStatus, ApiStatusCode }
-import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps._
+import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps.*
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.Validators
 
 import java.time.Instant

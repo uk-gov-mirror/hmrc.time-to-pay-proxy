@@ -20,7 +20,8 @@ import cats.implicits.catsSyntaxEitherId
 import com.google.inject.ImplementedBy
 import play.api.http.Status.{ NO_CONTENT, OK }
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse }
 import uk.gov.hmrc.timetopayproxy.config.AppConfig

@@ -23,7 +23,7 @@ private[httpreadsbuilder] trait HttpReadsBuilderCompanionInterfaces { this: Http
 
   /** See [[ConverterDefaultingTo503]] for what errors this `HttpReads` will generate. */
   def withDefault503ConnectorError[ServiceError >: ConverterDefaultingTo503.ServiceErrorLowerBound, Result](
-    sourceClass: Class[_]
+    sourceClass: Class[?]
   ): HttpReadsBuilder[ServiceError, Result] =
     HttpReadsBuilder.empty(
       sourceClass = sourceClass,
