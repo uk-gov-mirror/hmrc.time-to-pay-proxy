@@ -38,7 +38,7 @@ final case class CancellationReason(value: String) extends AnyVal
 
 object CancellationReason extends ValueTypeFormatter {
   implicit val format: Format[CancellationReason] =
-    valueTypeFormatter(CancellationReason.apply, CancellationReason.unapply)
+    valueTypeFormatter(CancellationReason.apply, x => Some(x.value))
 }
 
 sealed abstract class PaymentMethod(override val entryName: String) extends EnumEntry
@@ -58,14 +58,14 @@ final case class PaymentReference(value: String) extends AnyVal
 
 object PaymentReference extends ValueTypeFormatter {
   implicit val format: Format[PaymentReference] =
-    valueTypeFormatter(PaymentReference.apply, PaymentReference.unapply)
+    valueTypeFormatter(PaymentReference.apply, x => Some(x.value))
 }
 
 final case class UpdateType(value: String) extends AnyVal
 
 object UpdateType extends ValueTypeFormatter {
   implicit val format: Format[UpdateType] =
-    valueTypeFormatter(UpdateType.apply, UpdateType.unapply)
+    valueTypeFormatter(UpdateType.apply, x => Some(x.value))
 }
 
 final case class UpdatePlanRequest(

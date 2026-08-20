@@ -23,7 +23,7 @@ final case class CaseId(value: String) extends AnyVal
 
 object CaseId extends ValueTypeFormatter {
   implicit val format: Format[CaseId] =
-    valueTypeFormatter(CaseId.apply, CaseId.unapply)
+    valueTypeFormatter(CaseId.apply, x => Some(x.value))
 }
 
 sealed abstract class PlanStatus(override val entryName: String) extends EnumEntry

@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.common
 
 import cats.data.NonEmptyList
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsNumber, JsResultException, Json }
 import uk.gov.hmrc.timetopayproxy.models.{ DebtItemChargeId, FrequencyLowercase }
 import uk.gov.hmrc.timetopayproxy.models.currency.GbpPounds

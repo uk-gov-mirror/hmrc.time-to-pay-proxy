@@ -21,13 +21,13 @@ import cats.implicits.catsSyntaxEitherId
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.Inside.inside
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.timetopayproxy.connectors.TtpeConnector
 import uk.gov.hmrc.timetopayproxy.models.error.TtppEnvelope.TtppEnvelope
 import uk.gov.hmrc.timetopayproxy.models.error.{ ConnectorError, ProxyEnvelopeError, TtppEnvelope }
-import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi._
+import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.SaOnlyRegimeType
 import uk.gov.hmrc.timetopayproxy.models.{ ChargeTypesExcluded, IdType, IdValue, Identification }
 

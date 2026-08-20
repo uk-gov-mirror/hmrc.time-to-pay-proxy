@@ -21,13 +21,13 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{ equalTo, postRequestedFor, urlPathEqualTo }
 import com.github.tomakehurst.wiremock.http.RequestMethod.POST
 import play.api.libs.json.{ Json, Reads }
-import play.api.libs.ws.{ WSRequest, WSResponse }
+import play.api.libs.ws.{ WSRequest, WSResponse, writeableOf_JsValue }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.timetopayproxy.config.FeatureSwitch
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.featureSwitches.SaRelease2Enabled
-import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi._
-import uk.gov.hmrc.timetopayproxy.models.saonly.common._
+import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
 import uk.gov.hmrc.timetopayproxy.support.IntegrationBaseSpec
 
 import java.time.{ LocalDate, LocalDateTime }

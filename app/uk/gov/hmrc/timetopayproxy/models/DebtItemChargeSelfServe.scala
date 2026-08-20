@@ -24,14 +24,14 @@ final case class IsInterestBearingCharge(value: Boolean) extends AnyVal
 
 object IsInterestBearingCharge extends ValueTypeFormatter {
   implicit val format: Format[IsInterestBearingCharge] =
-    valueTypeFormatter(IsInterestBearingCharge.apply, IsInterestBearingCharge.unapply)
+    valueTypeFormatter(IsInterestBearingCharge.apply, x => Some(x.value))
 }
 
 final case class UseChargeReference(value: Boolean) extends AnyVal
 
 object UseChargeReference extends ValueTypeFormatter {
   implicit val format: Format[UseChargeReference] =
-    valueTypeFormatter(UseChargeReference.apply, UseChargeReference.unapply)
+    valueTypeFormatter(UseChargeReference.apply, x => Some(x.value))
 }
 
 final case class DebtItemChargeSelfServe(

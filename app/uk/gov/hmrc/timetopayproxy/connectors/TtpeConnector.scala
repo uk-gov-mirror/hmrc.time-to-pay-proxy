@@ -19,6 +19,7 @@ package uk.gov.hmrc.timetopayproxy.connectors
 import cats.data.EitherT
 import com.google.inject.ImplementedBy
 import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads, StringContextOps }
 import uk.gov.hmrc.timetopayproxy.config.{ AppConfig, FeatureSwitch }
@@ -78,7 +79,7 @@ class DefaultTtpeConnector @Inject() (appConfig: AppConfig, httpClient: HttpClie
         httpClient
           .post(url)
           .withBody(Json.toJson(chargeInfoRequest))
-          .setHeader(requestHeaders: _*)
+          .setHeader(requestHeaders*)
           .execute[Either[ProxyEnvelopeError, ChargeInfoResponse]]
       )
     ).logBasedOnStatusCode(logger)

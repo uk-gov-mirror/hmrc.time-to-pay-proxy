@@ -17,10 +17,10 @@
 package uk.gov.hmrc.timetopayproxy.models.affordablequotes
 
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsSuccess, JsValue, Json, Reads, Writes }
 import uk.gov.hmrc.timetopayproxy.models.{ Collections, DebtItemChargeId, Duration, InitialCollection, RegularCollection }
-import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps._
+import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps.*
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.Validators
 
 import java.time.{ LocalDate, LocalDateTime }
@@ -207,9 +207,8 @@ final class AffordableQuoteResponseSpec extends AnyFreeSpec {
 
         def obj: AffordableQuoteResponse = TestData.WithOnlySomes.obj
 
-        "writes the correct JSON" in {
-          writerToClients.writes(obj) shouldBeEquivalentTo json
-        }
+        "writes the correct JSON" in
+          writerToClients.writes(obj).shouldBeEquivalentTo(json)
 
         "writes JSON compatible with our schema" in {
           val schema = Validators.TimeToPayProxy.AffordableQuotes.openApiResponseSuccessfulSchema
@@ -223,9 +222,8 @@ final class AffordableQuoteResponseSpec extends AnyFreeSpec {
         def json: JsValue = TestData.With0Somes.json
         def obj: AffordableQuoteResponse = TestData.With0Somes.obj
 
-        "writes the correct JSON" in {
-          writerToClients.writes(obj) shouldBeEquivalentTo json
-        }
+        "writes the correct JSON" in
+          writerToClients.writes(obj).shouldBeEquivalentTo(json)
 
         "writes JSON compatible with our schema" in {
           val schema = Validators.TimeToPayProxy.AffordableQuotes.openApiResponseSuccessfulSchema

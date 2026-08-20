@@ -20,7 +20,7 @@ import play.api.libs.json.{ Format, Json }
 
 import java.time.LocalDate
 
-final case class CancellationDate(value: LocalDate)
+final case class CancellationDate(value: LocalDate) extends AnyVal
 
 object CancellationDate {
   implicit val format: Format[CancellationDate] = Json.valueFormat[CancellationDate]

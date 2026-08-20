@@ -18,11 +18,11 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi
 
 import cats.data.NonEmptyList
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsSuccess, JsValue, Json, Reads, Writes }
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.SaOnlyRegimeType
 import uk.gov.hmrc.timetopayproxy.models.{ IdType, IdValue, Identification }
-import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps._
+import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps.*
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.Validators
 
 class ChargeInfoRequestSpec extends AnyFreeSpec {

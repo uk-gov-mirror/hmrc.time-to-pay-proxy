@@ -17,6 +17,7 @@
 package uk.gov.hmrc.timetopayproxy.connectors
 
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.Inside.inside
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
 import play.api.test.{ DefaultAwaitTimeout, FutureAwaits }
@@ -25,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.timetopayproxy.config.{ AppConfig, FeatureSwitch }
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.affordablequotes.{ AffordableQuoteResponse, AffordableQuotesRequest }
 import uk.gov.hmrc.timetopayproxy.models.error.ConnectorError
 import uk.gov.hmrc.timetopayproxy.models.featureSwitches.InternalAuthEnabled
@@ -339,7 +340,7 @@ class TtpConnectorSpec extends PlaySpec with DefaultAwaitTimeout with FutureAwai
         affordableQuotesRequest = affordableQuotesRequest
       )
 
-      await(result.value) must matchPattern { case Right(_: AffordableQuoteResponse) => }
+      inside(await(result.value)) { case Right(_: AffordableQuoteResponse) => }
     }
 
     "parse an error response from an upstream service" in new Setup() {
@@ -359,13 +360,13 @@ class TtpConnectorSpec extends PlaySpec with DefaultAwaitTimeout with FutureAwai
 
   private def errorResponse(code: String, reason: String): String =
     s"""
-       |{
-       | "failures":[
-       |   {
-       |     "code":"$code",
-       |     "reason":"$reason"
-       |   }
-       | ]
-       |}
-       |""".stripMargin
+      |{
+      | "failures":[
+      |   {
+      |     "code":"$code",
+      |     "reason":"$reason"
+      |   }
+      | ]
+      |}
+      |""".stripMargin
 }

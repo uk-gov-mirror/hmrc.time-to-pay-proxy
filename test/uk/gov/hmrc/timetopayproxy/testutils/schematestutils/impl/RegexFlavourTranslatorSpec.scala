@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.testutils.schematestutils.impl
 
 import org.scalactic.source.Position
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 
 final class RegexFlavourTranslatorSpec extends AnyFreeSpec {
   "RegexFlavourTranslator" - {

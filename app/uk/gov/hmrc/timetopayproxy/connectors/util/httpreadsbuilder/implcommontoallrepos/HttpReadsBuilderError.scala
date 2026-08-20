@@ -91,7 +91,7 @@ private[httpreadsbuilder] object HttpReadsBuilderError {
   }
 
   /** Error created when the builder was never told to expect the received status code. */
-  final case class UnexpectedStatusCode(sourceClass: Class[_], responseContext: ResponseContext)
+  final case class UnexpectedStatusCode(sourceClass: Class[?], responseContext: ResponseContext)
       extends CentrallyImmplementedVariant {
 
     def whichEitherWasExpected: WhichEitherWasExpected = OriginallyMeantToBeLeft
@@ -101,7 +101,7 @@ private[httpreadsbuilder] object HttpReadsBuilderError {
 
   /** Error created when the builder was told to expect this status code, but the HTTP body was not JSON. */
   final case class ResponseBodyNotJson(
-    sourceClass: Class[_],
+    sourceClass: Class[?],
     responseContext: ResponseContext,
     whichEitherWasExpected: WhichEitherWasExpected,
     sensitiveException: Throwable
@@ -116,7 +116,7 @@ private[httpreadsbuilder] object HttpReadsBuilderError {
 
   /** Error created when the builder was told to expect this status code, but the HTTP body was the wrong JSON. */
   final case class ResponseBodyInvalidJsonStructure(
-    sourceClass: Class[_],
+    sourceClass: Class[?],
     responseContext: ResponseContext,
     whichEitherWasExpected: WhichEitherWasExpected,
     errs: Seq[(JsPath, Seq[JsonValidationError])]
@@ -140,7 +140,7 @@ private[httpreadsbuilder] object HttpReadsBuilderError {
 
   /** Error created when the builder was told to expect this status code, but we got a HTTP body without expecting one. */
   final case class ResponseBodyNotEmpty(
-    sourceClass: Class[_],
+    sourceClass: Class[?],
     responseContext: ResponseContext,
     whichEitherWasExpected: WhichEitherWasExpected
   ) extends CentrallyImmplementedVariant {

@@ -47,7 +47,7 @@ class TimeToPayTestController @Inject() (cc: ControllerComponents, ttpTestServic
   }
 
   def response: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    withJsonBody[RequestDetails] { details: RequestDetails =>
+    withJsonBody[RequestDetails] { details =>
       ttpTestService
         .saveResponseDetails(details)
         .leftMap(ttppError => ttppError.toWriteableProxyError)
@@ -56,7 +56,7 @@ class TimeToPayTestController @Inject() (cc: ControllerComponents, ttpTestServic
   }
 
   def saveError(): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    withJsonBody[RequestDetails] { details: RequestDetails =>
+    withJsonBody[RequestDetails] { details =>
       ttpTestService
         .saveError(details)
         .leftMap(ttppError => ttppError.toWriteableProxyError)

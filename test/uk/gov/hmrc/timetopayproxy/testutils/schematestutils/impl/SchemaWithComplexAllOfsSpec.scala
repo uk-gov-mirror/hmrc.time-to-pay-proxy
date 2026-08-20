@@ -17,7 +17,7 @@
 package uk.gov.hmrc.timetopayproxy.testutils.schematestutils.impl
 
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.Json
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.impl.dummyschemas.SchemaWithComplexAllOfs
 
@@ -27,11 +27,11 @@ class SchemaWithComplexAllOfsSpec extends AnyFreeSpec {
     "should pass if additional properties are not restricted" in {
 
       val allOfJson = """{
-                        |"string": "test1",
-                        |"number": 1,
-                        |"stringArray": ["test1"],
-                        |"numberArray": [1]
-                        |}""".stripMargin
+        |"string": "test1",
+        |"number": 1,
+        |"stringArray": ["test1"],
+        |"numberArray": [1]
+        |}""".stripMargin
 
       val errors =
         SchemaWithComplexAllOfs.openApiSchemaWithoutAdditionalPropertiesRestricted.validateAndGetErrors(
@@ -44,11 +44,11 @@ class SchemaWithComplexAllOfsSpec extends AnyFreeSpec {
     "should produce errors if additional properties are restricted" in {
 
       val allOfJson = """{
-                        |"string": "test1",
-                        |"number": 1,
-                        |"stringArray": ["test1"],
-                        |"numberArray": [1]
-                        |}""".stripMargin
+        |"string": "test1",
+        |"number": 1,
+        |"stringArray": ["test1"],
+        |"numberArray": [1]
+        |}""".stripMargin
 
       val errors =
         SchemaWithComplexAllOfs.openApiSchemaWithAdditionalPropertiesRestricted.validateAndGetErrors(

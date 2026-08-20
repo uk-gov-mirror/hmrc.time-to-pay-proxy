@@ -19,12 +19,12 @@ package uk.gov.hmrc.timetopayproxy.support
 import com.fasterxml.jackson.databind.{ JsonNode, ObjectMapper }
 import com.networknt.schema.regex.JDKRegularExpressionFactory
 import com.networknt.schema.resource.SchemaLoader
-import com.networknt.schema._
+import com.networknt.schema.*
 import org.scalatest.EitherValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 
 import java.nio.file.Paths
 import scala.jdk.CollectionConverters.CollectionHasAsScala

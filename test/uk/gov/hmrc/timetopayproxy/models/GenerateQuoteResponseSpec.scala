@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.models
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
@@ -55,41 +55,41 @@ class GenerateQuoteResponseSpec extends AnyWordSpec with Matchers {
   )
 
   val json = """{
-               |  "quoteReference": "quoteRef1234",
-               |  "customerReference": "custRef1234",
-               |  "quoteType": "instalmentAmount",
-               |  "quoteDate": "2021-05-13",
-               |  "numberOfInstalments": 1,
-               |  "totalDebtIncInt": 10,
-               |  "interestAccrued": 10,
-               |  "planInterest": 0.25,
-               |  "totalInterest": 0.25,
-               |  "instalments": [
-               |    {
-               |      "debtItemChargeId": "debtItemChargeId1",
-               |      "dueDate": "2021-05-13",
-               |      "amountDue": 100,
-               |      "expectedPayment": 100,
-               |      "interestRate": 0.24,
-               |      "instalmentNumber": 1,
-               |      "instalmentInterestAccrued": 10,
-               |      "instalmentBalance": 10
-               |    }
-               |  ],
-               | "collections": {
-               |    "initialCollection": {
-               |      "dueDate": "2022-06-18",
-               |      "amountDue": 1000
-               |    },
-               |    "regularCollections": [{
-               |      "dueDate": "2022-07-08",
-               |      "amountDue": 1628.21
-               |    }, {
-               |      "dueDate": "2022-08-08",
-               |      "amountDue": 1628.21
-               |    }]
-               |  }
-               |}""".stripMargin
+    |  "quoteReference": "quoteRef1234",
+    |  "customerReference": "custRef1234",
+    |  "quoteType": "instalmentAmount",
+    |  "quoteDate": "2021-05-13",
+    |  "numberOfInstalments": 1,
+    |  "totalDebtIncInt": 10,
+    |  "interestAccrued": 10,
+    |  "planInterest": 0.25,
+    |  "totalInterest": 0.25,
+    |  "instalments": [
+    |    {
+    |      "debtItemChargeId": "debtItemChargeId1",
+    |      "dueDate": "2021-05-13",
+    |      "amountDue": 100,
+    |      "expectedPayment": 100,
+    |      "interestRate": 0.24,
+    |      "instalmentNumber": 1,
+    |      "instalmentInterestAccrued": 10,
+    |      "instalmentBalance": 10
+    |    }
+    |  ],
+    | "collections": {
+    |    "initialCollection": {
+    |      "dueDate": "2022-06-18",
+    |      "amountDue": 1000
+    |    },
+    |    "regularCollections": [{
+    |      "dueDate": "2022-07-08",
+    |      "amountDue": 1628.21
+    |    }, {
+    |      "dueDate": "2022-08-08",
+    |      "amountDue": 1628.21
+    |    }]
+    |  }
+    |}""".stripMargin
 
   "GenerateQuoteResponse" should {
     "be correctly encoded and decoded" in {

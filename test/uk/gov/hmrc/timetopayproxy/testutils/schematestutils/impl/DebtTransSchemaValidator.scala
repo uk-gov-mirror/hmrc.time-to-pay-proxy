@@ -24,12 +24,13 @@ import com.networknt.schema.{ Schema, SchemaRegistry, SchemaRegistryConfig, Spec
 import com.networknt.schema.regex.JDKRegularExpressionFactory
 import org.scalactic.source.Position
 import org.scalatest.Assertions.fail
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsString, JsValue }
 
 import java.util.Locale
+import scala.annotation.unused
 import scala.io.Source
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.util.Using
 
 /** Provides a JSON schema for validating JSON requests/responses. See the companion for the predefined instances. */
@@ -75,7 +76,7 @@ object DebtTransSchemaValidator {
 
     /** Constructing this class will automatically verify it against the meta-schema. */
     metaSchemaValidation match {
-      case None => ()
+      case None                           => ()
       case Some(expectedValidationResult) =>
         val validator = MetaSchemas.jsonSchemaSchema(version)
         val errors: List[String] = validator.validateFromPathAndGetErrors(jsonOrYamlPath = jsonSchemaFilename)
@@ -126,7 +127,7 @@ object DebtTransSchemaValidator {
       InternalUtils.readJsonNode(jsonOrYamlPath = openApiYamlFilename)
 
     metaSchemaValidation match {
-      case None => ()
+      case None                           => ()
       case Some(expectedValidationResult) =>
         val actualVersion = fullOpenApiNode.path("openapi").asText("")
         val validator = MetaSchemas.yamlSchemaSchema(version = actualVersion)
@@ -284,13 +285,13 @@ object DebtTransSchemaValidator {
   /** Assortment of utilities needed to make the validation work. */
   private object InternalUtils {
 
-    def readJsonNode(jsonOrYamlPath: String)(implicit pos: Position): JsonNode = {
+    def readJsonNode(jsonOrYamlPath: String)(implicit @unused pos: Position): JsonNode = {
       val fileContent = Using(Source.fromFile(jsonOrYamlPath))(_.mkString).get
 
       jsonOrYamlPath.toLowerCase(Locale.ENGLISH) match {
         case s"$_.json"             => jsonToJsonNode(fileContent)
         case s"$_.yaml" | s"$_.yml" => yamlToJsonNode(fileContent)
-        case _ =>
+        case _                      =>
           fail(s"Cannot read file because it doesn't have a json/yaml/yml file extension: $jsonOrYamlPath")
       }
     }

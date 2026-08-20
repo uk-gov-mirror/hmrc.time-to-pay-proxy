@@ -19,8 +19,8 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi
 import org.scalactic.source.Position
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
-import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers.*
+import play.api.libs.json.*
 import uk.gov.hmrc.timetopayproxy.config.FeatureSwitch
 import uk.gov.hmrc.timetopayproxy.models.featureSwitches.SaRelease2Enabled
 import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi.ChargeInfoTestData.TestData

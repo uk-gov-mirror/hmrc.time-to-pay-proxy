@@ -18,12 +18,12 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel
 
 import cats.data.NonEmptyList
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
-import play.api.libs.json._
-import uk.gov.hmrc.timetopayproxy.models._
+import org.scalatest.matchers.should.Matchers.*
+import play.api.libs.json.*
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.currency.GbpPounds
-import uk.gov.hmrc.timetopayproxy.models.saonly.common._
-import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps._
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
+import uk.gov.hmrc.timetopayproxy.testutils.JsonAssertionOps.*
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.Validators
 import uk.gov.hmrc.timetopayproxy.testutils.schematestutils.Validators.TimeToPayProxy.TtpCancel.Live
 

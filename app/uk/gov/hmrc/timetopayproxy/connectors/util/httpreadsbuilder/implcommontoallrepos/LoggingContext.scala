@@ -36,18 +36,18 @@ private[httpreadsbuilder] final class LoggingContext[-ServiceError](
   def logError(responseContext: ResponseContext, error: HttpReadsBuilderError.CentrallyImmplementedVariant): Unit =
     logger.error(
       s"""${error.prodSummaryAndDetail}
-         |Returning: ${makeErrorSafeToLogInProd(error)} .
-         |Request made for received HTTP response: ${responseContext.method} ${responseContext.url} .
-         |Received HTTP response status: ${responseContext.response.status}.
-         |${safeToLogResponseBodyDescription(responseContext.response)}""".stripMargin
+        |Returning: ${makeErrorSafeToLogInProd(error)} .
+        |Request made for received HTTP response: ${responseContext.method} ${responseContext.url} .
+        |Received HTTP response status: ${responseContext.response.status}.
+        |${safeToLogResponseBodyDescription(responseContext.response)}""".stripMargin
     )(hc)
 
   def logWarningAboutValidUnsuccessfulResponse(responseContext: ResponseContext): Unit =
     logger.warn(
       s"""Valid and expected error response was received from HTTP call.
-         |Request made for received HTTP response: ${responseContext.method} ${responseContext.url} .
-         |Received HTTP response status: ${responseContext.response.status}.
-         |${safeToLogResponseBodyDescription(responseContext.response)}""".stripMargin
+        |Request made for received HTTP response: ${responseContext.method} ${responseContext.url} .
+        |Received HTTP response status: ${responseContext.response.status}.
+        |${safeToLogResponseBodyDescription(responseContext.response)}""".stripMargin
     )(hc)
 
   private def safeToLogResponseBodyDescription(response: HttpResponse): String =

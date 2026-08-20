@@ -20,10 +20,11 @@ import cats.data.NonEmptyList
 import com.fasterxml.jackson.core.util.{ DefaultIndenter, DefaultPrettyPrinter }
 import com.fasterxml.jackson.databind.{ ObjectMapper, SerializationFeature }
 import org.scalactic.source.Position
-import org.scalatest.matchers.should.Matchers._
-import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers.*
+import play.api.libs.json.*
 import play.api.libs.json.jackson.PlayJsonMapperModule
 
+import scala.annotation.unused
 import scala.collection.immutable.SortedMap
 
 object JsonAssertionOps {
@@ -39,7 +40,7 @@ object JsonAssertionOps {
       * uk.gov.hmrc.timetopay.testutils.JsonAssertionOps.* // ... myJsValue1 shouldBeEquivalentTo myJsValue2 // Same as
       * you would use `shouldBe`. </pre> </li>
       */
-    def shouldBeEquivalentTo(other: JsValue)(implicit pos: Position): Unit =
+    infix def shouldBeEquivalentTo(other: JsValue)(implicit @unused pos: Position): Unit =
       if (json != other) {
         val diffableJson1 = json.diffableString + "\n"
         val diffableJson2 = other.diffableString + "\n"
@@ -61,7 +62,7 @@ object JsonAssertionOps {
         case _: JsNumber       => json
         case _: JsString       => json
         case JsArray(children) => JsArray(children.map(_.sortedFields))
-        case JsObject(fields) =>
+        case JsObject(fields)  =>
           JsObject(SortedMap.from(fields.view.mapValues(_.sortedFields)))
       }
   }
@@ -113,7 +114,7 @@ object JsonAssertionOps {
       * Note that this logic is not appropriate for production code. Here we need to throw in order to fail incorrect
       * tests, but production code would use ValidatedNel.
       */
-    def strictDeepMerge(mainJson2: JsValue)(implicit pos: Position): JsValue = {
+    def strictDeepMerge(mainJson2: JsValue)(implicit @unused pos: Position): JsValue = {
 
       def recursive(json1: JsValue, json2: JsValue, path: JsPath): JsValue =
         (json1, json2) match {

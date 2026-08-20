@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus
 
 import play.api.libs.json.{ Format, Json }
 
-final case class ApiStatusCode(value: Int)
+final case class ApiStatusCode(value: Int) extends AnyVal
 
 object ApiStatusCode {
   implicit val format: Format[ApiStatusCode] = Json.valueFormat[ApiStatusCode]

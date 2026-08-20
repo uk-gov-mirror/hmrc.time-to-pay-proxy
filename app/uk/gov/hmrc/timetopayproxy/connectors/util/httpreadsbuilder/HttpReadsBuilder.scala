@@ -36,7 +36,7 @@ import uk.gov.hmrc.timetopayproxy.logging.RequestAwareLogger
  * The most complex features are required by time-to-pay, so that is the best place to test any refactoring.
  */
 final class HttpReadsBuilder[ServiceError, Result] private[httpreadsbuilder] (
-  sourceClass: Class[_],
+  sourceClass: Class[?],
   explicitHandlers: Map[Int, SingleStatusHandler[ServiceError, Result]],
   createConnectorError: HttpReadsBuilderError[ServiceError] => ServiceError
 ) {
@@ -164,7 +164,7 @@ object HttpReadsBuilder extends HttpReadsBuilderCompanionInterfaces {
     * @param converter Instance responsible for converting the internal builder errors into something the connector will understand.
     */
   def empty[ServiceError, Result](
-    sourceClass: Class[_],
+    sourceClass: Class[?],
     converter: HttpReadsBuilderErrorConverter[ServiceError]
   ): HttpReadsBuilder[ServiceError, Result] =
     new HttpReadsBuilder[ServiceError, Result](

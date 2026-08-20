@@ -24,7 +24,7 @@ import uk.gov.hmrc.timetopayproxy.models.HeaderNames.{ CorrelationIdKey, Request
 
 class RequestAwareLogger(underlying: Logger) {
 
-  def this(clazz: Class[_]) =
+  def this(clazz: Class[?]) =
     this(Logger(clazz))
 
   def trace(msg: => String)(implicit hc: HeaderCarrier): Unit = withRequestIDsInMDC(underlying.trace(msg))
@@ -136,8 +136,7 @@ object PagerAlert {
   case object ProxyJsonIssueAlert
       extends PagerAlert(summary = "CRITICAL: A request in time-to-pay-proxy has JSON issues", level = Level.ERROR)
 
-  case object ProxyValidationIssueAlert
-      extends PagerAlert(
+  case object ProxyValidationIssueAlert extends PagerAlert(
         summary = "CRITICAL: A request in time-to-pay-proxy has validation issues",
         level = Level.ERROR
       )

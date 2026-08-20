@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.timetopayproxy.models.currency
 
-import org.scalatest.EitherValues._
+import org.scalatest.EitherValues.*
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.{ JsError, JsResult, Json, Reads, Writes }
 
-import java.math.{ BigDecimal => JavaBigDecimal, MathContext, RoundingMode }
+import java.math.{ BigDecimal as JavaBigDecimal, MathContext, RoundingMode }
 
 final class GbpPoundsSpec extends AnyFreeSpec {
   "GbpPounds" - {

@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.models.error
 
 import uk.gov.hmrc.timetopayproxy.utils.WithLoggableDebugString
 
-trait ProxyEnvelopeError extends WithLoggableDebugString { this: Product with Serializable =>
+trait ProxyEnvelopeError extends WithLoggableDebugString { this: Product & Serializable =>
   def toWriteableProxyError: TtppWriteableError
 
   /** As much debugging information as might be useful, which can be logged in production. */

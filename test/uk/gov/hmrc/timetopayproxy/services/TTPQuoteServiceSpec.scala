@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.timetopayproxy.services
 
-import cats.syntax.either._
+import cats.syntax.either.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.timetopayproxy.connectors.TtpConnector
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.affordablequotes.{ AffordableQuoteResponse, AffordableQuotesRequest }
 import uk.gov.hmrc.timetopayproxy.models.error.TtppEnvelope.TtppEnvelope
 import uk.gov.hmrc.timetopayproxy.models.error.{ ConnectorError, ProxyEnvelopeError, TtppEnvelope }
@@ -342,7 +342,7 @@ class TTPQuoteServiceSpec extends UnitSpec {
         PaymentMethod.OnGoingAward
       )
 
-      paymentMethods.foreach { paymentMethod: PaymentMethod =>
+      paymentMethods.foreach { paymentMethod =>
         val retrievePlanWithPaymentInfo =
           retrievePlanResponse.copy(payments = List(PaymentInformation(paymentMethod, Some(paymentReference))))
 

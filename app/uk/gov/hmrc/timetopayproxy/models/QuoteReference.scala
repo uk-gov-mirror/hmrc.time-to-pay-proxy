@@ -22,5 +22,5 @@ final case class QuoteReference(value: String) extends AnyVal
 
 object QuoteReference extends ValueTypeFormatter {
   implicit val format: Format[QuoteReference] =
-    valueTypeFormatter(QuoteReference.apply, QuoteReference.unapply)
+    valueTypeFormatter(QuoteReference.apply, x => Some(x.value))
 }

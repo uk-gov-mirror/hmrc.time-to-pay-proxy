@@ -18,8 +18,8 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.common
 
 import cats.data.NonEmptyList
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers.shouldBe
+import play.api.libs.json.*
 
 final case class NelInts(values: NonEmptyList[Int])
 

@@ -19,8 +19,8 @@ package uk.gov.hmrc.timetopayproxy.actions.auth
 import enumeratum.{ Enum, EnumEntry }
 import play.api.Logger
 import play.api.mvc.Results.{ Forbidden, ServiceUnavailable }
-import play.api.mvc._
-import uk.gov.hmrc.auth.core._
+import play.api.mvc.*
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.timetopayproxy.config.FeatureSwitch

@@ -15,7 +15,7 @@
  */
 
 package uk.gov.hmrc.timetopayproxy.models
-import play.api.libs.json._
+import play.api.libs.json.*
 
 trait ValueTypeFormatter {
   def valueTypeFormatter[T, U](

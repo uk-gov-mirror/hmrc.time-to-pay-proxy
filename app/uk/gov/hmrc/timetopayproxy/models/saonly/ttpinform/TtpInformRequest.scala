@@ -17,7 +17,7 @@
 package uk.gov.hmrc.timetopayproxy.models.saonly.ttpinform
 
 import cats.data.NonEmptyList
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.{ SaOnlyInstalment, SaOnlyPaymentPlan, TransitionedIndicator }
 import uk.gov.hmrc.timetopayproxy.models.{ ChannelIdentifier, Identification }
 import uk.gov.hmrc.timetopayproxy.utils.json.CatsNonEmptyListJson

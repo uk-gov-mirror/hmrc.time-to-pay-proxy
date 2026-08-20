@@ -20,7 +20,7 @@ import play.api.libs.json.{ Format, Json }
 
 import java.time.LocalDate
 
-final case class TtpEndDate(value: LocalDate)
+final case class TtpEndDate(value: LocalDate) extends AnyVal
 
 object TtpEndDate {
   implicit val writes: Format[TtpEndDate] = Json.valueFormat[TtpEndDate]

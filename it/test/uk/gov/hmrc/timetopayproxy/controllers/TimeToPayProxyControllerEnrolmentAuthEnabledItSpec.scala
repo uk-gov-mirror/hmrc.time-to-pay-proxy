@@ -18,21 +18,21 @@ package uk.gov.hmrc.timetopayproxy.controllers
 
 import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.http.RequestMethod.{ GET, POST, PUT }
 import play.api.libs.json.{ Json, Reads }
-import play.api.libs.ws.{ WSRequest, WSResponse }
+import play.api.libs.ws.{ WSRequest, WSResponse, writeableOf_JsValue }
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.timetopayproxy.config.FeatureSwitch
-import uk.gov.hmrc.timetopayproxy.models._
+import uk.gov.hmrc.timetopayproxy.models.*
 import uk.gov.hmrc.timetopayproxy.models.affordablequotes.{ AffordableQuoteResponse, AffordableQuotesRequest }
 import uk.gov.hmrc.timetopayproxy.models.currency.GbpPounds
 import uk.gov.hmrc.timetopayproxy.models.featureSwitches.SaRelease2Enabled
-import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi._
-import uk.gov.hmrc.timetopayproxy.models.saonly.common._
+import uk.gov.hmrc.timetopayproxy.models.saonly.chargeInfoApi.*
+import uk.gov.hmrc.timetopayproxy.models.saonly.common.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.common.apistatus.{ ApiErrorResponse, ApiName, ApiStatus, ApiStatusCode }
 import uk.gov.hmrc.timetopayproxy.models.saonly.ttpcancel.{ CancellationDate, TtpCancelPaymentPlanR2, TtpCancelRequestR2, TtpCancelSuccessfulResponse }
-import uk.gov.hmrc.timetopayproxy.models.saonly.ttpfullamend._
+import uk.gov.hmrc.timetopayproxy.models.saonly.ttpfullamend.*
 import uk.gov.hmrc.timetopayproxy.models.saonly.ttpinform.{ TtpInformRequest, TtpInformSuccessfulResponse }
 import uk.gov.hmrc.timetopayproxy.support.IntegrationBaseSpec
 

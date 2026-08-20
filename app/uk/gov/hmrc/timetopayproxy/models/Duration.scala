@@ -22,5 +22,5 @@ case class Duration(value: Int) extends AnyVal
 
 object Duration extends ValueTypeFormatter {
   implicit val format: Format[Duration] =
-    valueTypeFormatter(Duration.apply, Duration.unapply)
+    valueTypeFormatter(Duration.apply, x => Some(x.value))
 }

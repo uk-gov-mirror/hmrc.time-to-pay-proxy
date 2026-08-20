@@ -50,9 +50,9 @@ private[impl] object RegexFlavourTranslator {
       logger.warn(
         // Newlines around the text to make it more readable, since it's already got newlines in the middle.
         s"""
-           |Updated OpenAPI regex flavour from EcmaScript to Java: $esPattern ==> $javaPattern
-           |  in $locationContext
-           |""".stripMargin
+          |Updated OpenAPI regex flavour from EcmaScript to Java: $esPattern ==> $javaPattern
+          |  in $locationContext
+          |""".stripMargin
       )
     }
 

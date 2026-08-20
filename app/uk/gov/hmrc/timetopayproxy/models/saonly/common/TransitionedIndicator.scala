@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopayproxy.models.saonly.common
 
 import play.api.libs.json.{ Format, Json }
 
-final case class TransitionedIndicator(value: Boolean)
+final case class TransitionedIndicator(value: Boolean) extends AnyVal
 
 object TransitionedIndicator {
   implicit val writes: Format[TransitionedIndicator] = Json.valueFormat[TransitionedIndicator]
